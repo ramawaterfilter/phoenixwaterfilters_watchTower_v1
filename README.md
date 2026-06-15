@@ -98,3 +98,21 @@ python -m watchtower.main          # writes data/last_report.html (open it in a 
 **Open it:** download the repo and open `dashboard/index.html` (it loads `data.js` + `app.bundle.js` from the same folder). For an always-on shared screen, serve the `dashboard/` folder from a **private** host — avoid public GitHub Pages, since the data names real unfixed issues.
 
 © 2026 RAMA Group of Companies. All rights reserved.
+
+---
+
+## Importing audits & managing fixes — via GitHub (no admin page, no password)
+Add more issues, and manage their fix status, entirely through the repo:
+
+1. Put a CSV in the **`/audits`** folder (any name ending `.csv`). Files whose name starts with `_`
+   are ignored, so `_TEMPLATE.csv` and `_example-uk-cro-audit.csv` are samples only — copy/rename one to activate it.
+2. The next crawl run ingests every CSV and lists the issues on the **Site Watchtower** tab under
+   **“Audit issues — imported.”**
+
+**Columns** — only `issue` is required; headers are case-insensitive and common aliases are accepted:
+`id, market, area, issue, detail, severity, source, owner, status, note`
+
+**Marking a fix (GitHub is the “backend”):** open the CSV on GitHub, change a row’s **`status`**
+(`open` → `in progress` → `fixed`; also `wontfix` / `muted`) and commit. The next run reflects it.
+Who can change a fix = who has **write access to the repo** — that is your access control, so there is
+no password to store. Auto-crawl checks stay automatic; these imported issues are the manually-managed ones.

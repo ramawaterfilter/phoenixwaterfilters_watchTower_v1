@@ -21,6 +21,7 @@ from . import crawl
 from . import checks as checkmod
 from . import report as reportmod
 from . import analyze_claude
+from . import audits
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -109,7 +110,8 @@ def main() -> None:
 
     # 4a) the Command Center dashboard reads this file (dashboard/index.html + app.bundle.js are static)
     slim = [{k: r.get(k) for k in ("id", "market", "label", "task", "result", "change", "detail")} for r in results]
-    payload = {"ts": ts, "generated": run_label, "results": slim}
+    audit_issues = audits.load_audit_issues(ROOT)   # imported from /audits/*.csv; status managed in GitHub
+    payload = {"ts": ts, "generated": run_label, "results": slim, "audit_issues": audit_issues}
     DASH_DATA.parent.mkdir(parents=True, exist_ok=True)
     DASH_DATA.write_text("window.__WATCHTOWER__ = " + json.dumps(payload, ensure_ascii=False) + ";\n", encoding="utf-8")
 

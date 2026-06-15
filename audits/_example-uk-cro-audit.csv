@@ -1,0 +1,6 @@
+id,market,area,issue,detail,severity,source,owner,status,note
+UKC-01,UK,CRO,Sticky add-to-cart missing on mobile PDP,No persistent ATC bar on scroll,P1,UK CRO Audit Jun26,Anandraj,open,
+UKC-02,UK,CRO,No urgency / scarcity cue on PDP,Add low-stock + rolling timer,P2,UK CRO Audit Jun26,Anandraj,in progress,Building the badge
+UKC-03,UK,Trust,Reviews not surfaced in the buy box,Move star rating above the fold,P2,UK CRO Audit Jun26,Divya,open,
+UKC-04,UK,Checkout,Express pay (Shop Pay / Apple Pay) not enabled,Enable accelerated checkout,P1,UK CRO Audit Jun26,Anandraj,fixed,Enabled 12 Jun
+UKC-05,UK,Offers,No subscribe upsell on cart,Add cartridge subscribe upsell,P2,UK CRO Audit Jun26,Anandraj,open,

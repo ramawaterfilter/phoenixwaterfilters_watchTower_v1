@@ -3,12 +3,6 @@ name: Phoenix Watchtower
 # GitHub Actions cron is UTC and best-effort (may start a few min late). IST = UTC+5:30:
 #   10:00 IST -> 04:30 UTC | 13:00 IST -> 07:30 UTC | 19:00 IST -> 13:30 UTC
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'data/**'
-      - 'dashboard/data.js'
   schedule:
     - cron: '30 4 * * *'
     - cron: '30 7 * * *'
@@ -17,8 +11,6 @@ on:
 
 permissions:
   contents: write          # to commit the report + snapshot back to the repo
-  pages: write             # to deploy to Pages
-  id-token: write          # to verify the deployment source
 
 concurrency:
   group: watchtower
@@ -46,22 +38,3 @@ jobs:
           git add data/last_snapshot.json dashboard/data.js 2>/dev/null || true
           git commit -m "watchtower run $(date -u +%FT%TZ)" || echo "nothing to commit"
           git push || echo "push skipped"
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: audit
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './dashboard'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

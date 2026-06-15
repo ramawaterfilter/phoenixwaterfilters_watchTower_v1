@@ -1,0 +1,2 @@
+id,market,area,issue,detail,severity,source,owner,status,note
+,UK,CRO,Short title of the issue,Longer detail / page / recommendation,P2,Which audit it came from,Owner name,open,Optional fix note
