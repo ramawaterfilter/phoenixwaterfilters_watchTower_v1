@@ -1,0 +1,40 @@
+name: Phoenix Watchtower
+
+# GitHub Actions cron is UTC and best-effort (may start a few min late). IST = UTC+5:30:
+#   10:00 IST -> 04:30 UTC | 13:00 IST -> 07:30 UTC | 19:00 IST -> 13:30 UTC
+on:
+  schedule:
+    - cron: '30 4 * * *'
+    - cron: '30 7 * * *'
+    - cron: '30 13 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write          # to commit the report + snapshot back to the repo
+
+concurrency:
+  group: watchtower
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Run Watchtower
+        env:
+          # OPTIONAL — only needed if you want the Claude-written summary per market.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ secrets.ANTHROPIC_MODEL }}
+        run: python -m watchtower.main      # writes the run Summary + data/last_report.html
+      - name: Commit report & snapshot
+        run: |
+          git config user.name  "phoenix-watchtower[bot]"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/last_snapshot.json dashboard/data.js 2>/dev/null || true
+          git commit -m "watchtower run $(date -u +%FT%TZ)" || echo "nothing to commit"
+          git push || echo "push skipped"

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phoenix Gravity — Global Command Center</title>
+<style>
+html,body{height:100%;margin:0;max-width:100%;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+#root{min-height:100%;max-width:100%}
+body{background:#EEF2F8}
+
+.cc-app,.pg-root,.pg-main,.pg-table-wrap,.pg-table,.wt-table{max-width:100%;min-width:0}
+.cc-top>*,.pg-head>*,.pg-hero>*,.pg-tri>*,.pg-kpis>*,.pg-tr>*,.wt-tr>*{min-width:0}
+.pg-matrix-wrap{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+.pg-rtask,.c-task,.wt-clab,.wt-det{overflow-wrap:anywhere}
+
+@media (max-width:720px){
+  .cc-top{padding:10px 12px}
+  .cc-brand{min-width:0}
+  .cc-logo{height:42px}
+  .cc-brand-s{font-size:11px}
+  .cc-tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .cc-tab{min-width:0;padding:9px 8px}
+  .pg-main{padding-left:12px;padding-right:12px}
+  .pg-head{padding-left:12px;padding-right:12px}
+  .pg-table-wrap{overflow:hidden}
+  .pg-tr,.wt-tr{width:100%}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<!-- data.js is rewritten by the crawl Action each run; app.bundle.js is static -->
+<script src="data.js"></script>
+<script src="app.bundle.js"></script>
+</body>
+</html>

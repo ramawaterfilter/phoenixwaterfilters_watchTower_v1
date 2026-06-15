@@ -1,0 +1,4182 @@
+import React, { useState, useMemo, useEffect } from "react";
+
+/* PHOENIX GRAVITY — GLOBAL EXECUTION COMMAND (CEO read view)
+   Snapshot mirrors the Global Task Tracker (Google Sheet = source of truth).
+   Regenerate this view each re-audit cycle. */
+
+const TASKS = [
+{
+"id": "US-01",
+"market": "US",
+"assignedBy": "CEO",
+"owner": "Vijaykumar",
+"dev": "Nice",
+"dept": "Website/Shopify",
+"category": "Theme Migration",
+"task": "Consolidate dual Shopify themes (t/37 → t/46) so meta, schema & OG unify site-wide",
+"outcome": "One theme live; all page types audited",
+"impact": "Root cause of ~6 other issues",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-05",
+"revised": null,
+"status": "In Progress",
+"completion": 55,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Migrate remaining 4 page types",
+"proof": null,
+"closure": null,
+"remarks": "Parent of several PDP/SEO fixes"
+},
+{
+"id": "US-02",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Nice",
+"dept": "SEO",
+"category": "Schema/Technical SEO",
+"task": "Add JSON-LD Product/Offer schema to flagship PDP",
+"outcome": "Rich result validated in GSC",
+"impact": "113K impr @1.19% CTR; schema can lift CTR 20–40%",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-06",
+"revised": null,
+"status": "In Progress",
+"completion": 70,
+"done": false,
+"dependency": "US-01",
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "QA in Rich Results Test; deploy",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-03",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Landing page: Best Gravity Water Filter System (head term)",
+"outcome": null,
+"impact": "'gravity water filter' stuck pos 11.4",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "In Progress",
+"completion": 30,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "Weekly",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Draft copy + on-page",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-04",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Add mid-article CTA cards to top 10 blog posts",
+"outcome": null,
+"impact": "Top blogs earn $0 — no inline CTAs",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-05-30",
+"revised": "2026-06-15",
+"status": "Delayed",
+"completion": 40,
+"done": false,
+"dependency": null,
+"blocker": "Agency capacity",
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Confirm metafield component",
+"proof": null,
+"closure": null,
+"remarks": "Slipped once → 15-Jun"
+},
+{
+"id": "US-05",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "PDP/UX",
+"category": "PDP/UX",
+"task": "Reorder PDP 'How It Works' steps; remove duplicate Step 2",
+"outcome": "Steps render 1→2→3 on live PDP",
+"impact": "Wrong order damaged credibility",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-09",
+"revised": null,
+"status": "Completed",
+"completion": 100,
+"done": true,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": null,
+"proof": "phoenixgravity.com/products/gravity-water-filter",
+"closure": "2026-06-08",
+"remarks": "Verified live"
+},
+{
+"id": "US-06",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Nice",
+"dept": "CRO",
+"category": "PDP/UX",
+"task": "Sticky mobile Add-to-Cart bar on PDP",
+"outcome": null,
+"impact": "Highest-ROI mobile fix; was 'ignore'",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-06",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": "De-prioritised earlier",
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Reverse 'ignore'; re-scope with Dev",
+"proof": null,
+"closure": null,
+"remarks": "Recovered from 'ignore' list"
+},
+{
+"id": "US-07",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Nice",
+"dept": "CRO",
+"category": "Pricing/Offers",
+"task": "One-Time / Subscribe & Save 5% toggle on PDP",
+"outcome": null,
+"impact": "Subscription hidden = lost recurring rev",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-12",
+"revised": null,
+"status": "In Progress",
+"completion": 25,
+"done": false,
+"dependency": "Subscription app",
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Configure widget",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-08",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "CRO",
+"category": "Offers/Lifecycle",
+"task": "Exit-intent email capture with zip-contaminant hook",
+"outcome": null,
+"impact": "94% don't convert first visit; no capture",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-05",
+"revised": null,
+"status": "Waiting for Input",
+"completion": 20,
+"done": false,
+"dependency": null,
+"blocker": "Awaiting offer/copy approval",
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Approve incentive + copy",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-09",
+"market": "US",
+"assignedBy": "CEO",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Legal/Compliance",
+"category": "Compliance/Claims",
+"task": "Add US business address to site footer (all pages)",
+"outcome": null,
+"impact": "Trust + marketplace compliance risk",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-04",
+"revised": null,
+"status": "Blocked",
+"completion": 10,
+"done": false,
+"dependency": null,
+"blocker": "Awaiting address from Finance",
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Obtain confirmed US address",
+"proof": null,
+"closure": null,
+"remarks": "Compliance"
+},
+{
+"id": "US-10",
+"market": "US",
+"assignedBy": "CEO",
+"owner": "Vijaykumar",
+"dev": "Nice",
+"dept": "Website/Shopify",
+"category": "Compliance/Claims",
+"task": "Footnote/asterisk on 99.99% contaminant claims (PDP)",
+"outcome": null,
+"impact": "Unqualified claims = FTC/legal exposure",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-03",
+"revised": null,
+"status": "In Progress",
+"completion": 50,
+"done": false,
+"dependency": "Lab/test reference",
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Insert footnote citing test basis",
+"proof": null,
+"closure": null,
+"remarks": "High legal priority"
+},
+{
+"id": "US-11",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Customer Support",
+"category": "Escalation/CS",
+"task": "Reply to public teak-stand staining review",
+"outcome": "Public reply posted; remedy offered",
+"impact": "Unanswered negative review deters buyers",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-05",
+"revised": null,
+"status": "Completed",
+"completion": 100,
+"done": true,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": null,
+"proof": "phoenixgravity.com/pages/reviews",
+"closure": "2026-06-06",
+"remarks": "Closed 1 day late"
+},
+{
+"id": "US-12",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "Website/Shopify",
+"category": "Social Proof/Reviews",
+"task": "Fix cloned '705 reviews' count on accessory cards",
+"outcome": "Each product shows its own count",
+"impact": "Cloned counts erode trust",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-05-28",
+"revised": null,
+"status": "Completed",
+"completion": 100,
+"done": true,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": null,
+"proof": "phoenixgravity.com/collections/all-products",
+"closure": "2026-05-30",
+"remarks": null
+},
+{
+"id": "US-13",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Google Ads",
+"category": "Budget/Pacing",
+"task": "Reallocate Google Ads to PMax winners; cap losing terms",
+"outcome": null,
+"impact": "Wasted spend on non-converting terms",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-08",
+"revised": null,
+"status": "In Progress",
+"completion": 35,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "Daily",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Add negatives; shift 20%",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-14",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Meta Ads",
+"category": "Creative",
+"task": "Launch 3 UGC creatives; pause 2 fatigued ads",
+"outcome": null,
+"impact": "Creative fatigue dragging ROAS",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-10",
+"revised": null,
+"status": "In Progress",
+"completion": 45,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "Weekly",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Finalise 3rd creative; A/B",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-15",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Amazon",
+"category": "Listing Quality",
+"task": "Fix Amazon listing: A+ content + AISI 304 spec + gallons",
+"outcome": null,
+"impact": "Spec errors hurt CR & compliance",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-06",
+"revised": null,
+"status": "In Progress",
+"completion": 60,
+"done": false,
+"dependency": "Brand Registry",
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Upload corrected A+",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-16",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Walmart",
+"category": "Listing Quality",
+"task": "Resolve Walmart listing-quality flags + buy-box",
+"outcome": null,
+"impact": "Low quality limits visibility",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-09",
+"revised": null,
+"status": "In Progress",
+"completion": 40,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Complete attributes/images",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-17",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "eBay",
+"category": "Listing Quality",
+"task": "Optimise eBay listings (titles, specifics, promoted)",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-05-29",
+"revised": null,
+"status": "Deferred",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": "Channel de-prioritised this quarter",
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Revisit next quarter",
+"proof": null,
+"closure": null,
+"remarks": "Deferred by CEO"
+},
+{
+"id": "US-18",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Inventory/3PL",
+"category": "Inventory Planning",
+"task": "Replenish best-seller (1.5G) — 3-week cover pre-promo",
+"outcome": null,
+"impact": "Stockout in sale loses peak revenue",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-09",
+"revised": null,
+"status": "In Progress",
+"completion": 50,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "Weekly",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Confirm PO + inbound date",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-19",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Inventory/3PL",
+"category": "Fulfilment/3PL",
+"task": "Resolve 3PL mis-ship backlog (12 orders)",
+"outcome": null,
+"impact": "Mis-ships drive bad reviews + CS load",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-02",
+"revised": null,
+"status": "Blocked",
+"completion": 30,
+"done": false,
+"dependency": null,
+"blocker": "Awaiting 3PL credit",
+"esc": "Yes",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Escalate to 3PL account manager",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-20",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Customer Support",
+"category": "Reporting",
+"task": "Daily CS queue clear-down + escalation triage",
+"outcome": null,
+"impact": "Backlog hurts CSAT",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-08",
+"revised": null,
+"status": "In Progress",
+"completion": 60,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "Daily",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Clear tickets; tag escalations",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-21",
+"market": "US",
+"assignedBy": "CEO",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Send daily executive flash to Ramesh (sales, CVR, spend, blockers)",
+"outcome": "Flash sent by 10:00",
+"impact": "CEO needs daily execution visibility",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-09",
+"revised": null,
+"status": "In Progress",
+"completion": 80,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "Daily",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Finalise and send",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-22",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Nice",
+"dept": "Website/Shopify",
+"category": "PDP/UX",
+"task": "48-hour rolling countdown timer under WELLNESS SALE",
+"outcome": null,
+"impact": "Was 'ignore'; weak urgency lever",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-05-24",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": "Dismissed in earlier audit",
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Decide build vs app",
+"proof": null,
+"closure": null,
+"remarks": "Recovered from 'ignore' list"
+},
+{
+"id": "US-23",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "Website/Shopify",
+"category": "PDP/UX",
+"task": "Relabel 'Most Popular' (1.5G) to 'Best Value'",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-05-16",
+"revised": null,
+"status": "Cancelled",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": "Superseded by full PDP redesign",
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Folded into redesign",
+"proof": null,
+"closure": null,
+"remarks": "See US-01"
+},
+{
+"id": "US-24",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "—",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Weekly e-commerce scorecard (channel rev, CVR, AOV, ROAS)",
+"outcome": null,
+"impact": "CEO wants consistent weekly numbers",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-12",
+"revised": null,
+"status": "In Progress",
+"completion": 30,
+"done": false,
+"dependency": "Windsor.ai",
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "Weekly",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Wire up data sources",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "US-25",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "SEO",
+"category": "Schema/Technical SEO",
+"task": "Unblock policy pages from robots.txt",
+"outcome": "Policy pages crawlable",
+"impact": "Robots-blocked pages hurt trust",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-01",
+"revised": null,
+"status": "Completed",
+"completion": 100,
+"done": true,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": null,
+"proof": "phoenixgravity.com/policies/refund-policy",
+"closure": "2026-06-03",
+"remarks": null
+},
+{
+"id": "US-26",
+"market": "US",
+"assignedBy": "Manager",
+"owner": "Vijaykumar",
+"dev": "Vasialai",
+"dept": "Website/Shopify",
+"category": "Social Proof/Reviews",
+"task": "Replace Reviews-page OG image 'UK.jpg' with US image",
+"outcome": null,
+"impact": "Wrong-region OG confuses US sharing",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-06-11",
+"revised": null,
+"status": "In Progress",
+"completion": 20,
+"done": false,
+"dependency": "US lifestyle asset",
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "US #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Source US image",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "PT-01",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Divya",
+"dev": "Nice",
+"dept": "PDP/UX",
+"category": "PDP/UX",
+"task": "POSTreat PDP revamp — rebuild /products/postreat-fluoride-remover",
+"outcome": "Revamped PDP live; fluoride intent served",
+"impact": "2,254 impr / 1 click, pos 14.6 — stranded",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-15",
+"revised": null,
+"status": "In Progress",
+"completion": 20,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK SEO #1 / POSTreat",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Wireframe + copy for fluoride PDP",
+"proof": null,
+"closure": null,
+"remarks": "Owner: Divya — due 15-Jun"
+},
+{
+"id": "PT-02",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "PDP/UX",
+"category": "PDP/UX",
+"task": "Create NEW POSTreat PDP (France launch)",
+"outcome": "New FR POSTreat PDP published",
+"impact": "Extend fluoride range to FR market",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-25",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": "PT-01",
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR launch / POSTreat",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Localise PT-01 build for FR",
+"proof": null,
+"closure": null,
+"remarks": "ASSUMPTION: treated as FR launch — confirm if UK rebuild"
+},
+{
+"id": "FR-01",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Legal/Compliance",
+"category": "Legal/GDPR",
+"task": "Add EU 14-day right of withdrawal; remove unlawful 'unused' condition",
+"outcome": "Compliant withdrawal policy live",
+"impact": "Consumer-law exposure; open across audits #1-4",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-09",
+"nextAction": "Draft compliant policy + publish",
+"proof": null,
+"closure": null,
+"remarks": "Carried from prior FR audit"
+},
+{
+"id": "FR-02",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Legal/Compliance",
+"category": "Legal/GDPR",
+"task": "Restore SIRET / legal entity in T&Cs (§21 truncated)",
+"outcome": "Full legal entity shown",
+"impact": "Legal disclosure requirement",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Carried from prior FR audit"
+},
+{
+"id": "FR-03",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Legal/Compliance",
+"category": "Legal/GDPR",
+"task": "GDPR consent banner consistent on all pages",
+"outcome": "Consent banner site-wide",
+"impact": "GDPR; banner was on KokoCarb only",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-17",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Carried from prior FR audit"
+},
+{
+"id": "FR-04",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Website/Shopify",
+"category": "Theme Migration",
+"task": "Publish theme globally — legal/FAQ pages still on old theme (broken cart, UK phone)",
+"outcome": "All pages on new theme; cart works",
+"impact": "Broken buy path on legal pages",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Carried; root-cause fix"
+},
+{
+"id": "FR-05",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Vasialai",
+"dept": "Website/Shopify",
+"category": "Compliance/Claims",
+"task": "Remove Calendly 'dealership-uk-clone' link in footer",
+"outcome": null,
+"impact": "UK-clone artefact on FR site",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-13",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Carried from prior FR audit"
+},
+{
+"id": "FR-06",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Compliance/Claims",
+"task": "Translate lab-report PDF (English-only) to French",
+"outcome": null,
+"impact": "English-only lab doc on FR site",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Carried from prior FR audit"
+},
+{
+"id": "FR-11",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "CRO",
+"category": "Landing Page CRO",
+"task": "Offer-first layout on money pages (fix 80%+ scroll drop)",
+"outcome": "Price/rating/CTA in first screen",
+"impact": "Most traffic never sees the offer",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": "Rebuild above-the-fold",
+"proof": null,
+"closure": null,
+"remarks": "Carried; overlaps PDP redesign (FR-43)"
+},
+{
+"id": "FR-12",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Fix insertAdjacentHTML JS error in buy path",
+"outcome": "Add-to-cart works end-to-end on mobile",
+"impact": "Breaks buy component for many sessions",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Carried from prior FR audit"
+},
+{
+"id": "FR-16",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Website/Shopify",
+"category": "Pricing/Offers",
+"task": "Surface KokoCarb subscription toggle (-5%, cancel anytime)",
+"outcome": "Sub / one-time toggle in buy box",
+"impact": "Highest-value missed conversion (LTV)",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR audit · legal/CRO",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Carried from prior FR audit"
+},
+{
+"id": "FR-30",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Domain/Canonicals",
+"task": "Disable unused Shopify Markets locales (keep France only)",
+"outcome": "Only /fr indexable",
+"impact": "30+ /en//es//nl URLs polluting the index",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P1-01",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": "Shopify Admin → Markets",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-31",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Localisation/FR",
+"category": "Translation/Localisation",
+"task": "Remove translator's note from cartridge PDP",
+"outcome": null,
+"impact": "« Note du traducteur » visible in production",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-12",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P1-02",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-32",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Legal/Compliance",
+"category": "Compliance/Claims",
+"task": "Fix NAP — one French email + French phone (remove UK +44)",
+"outcome": null,
+"impact": "Two emails + UK phone on FR site = trust loss",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-13",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P1-03",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-33",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "robots.txt blocks + de-index sensitive URLs (account/orders, VAT invoices)",
+"outcome": "Sensitive URLs out of index",
+"impact": "Customer order / VAT-invoice URLs indexed = data exposure",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-14",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR SEO · P1-04",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-34",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Vasialai",
+"dept": "Technical SEO",
+"category": "Domain/Canonicals",
+"task": "Fix URL typos (/pricvacy-policy, /refund-polycy-new) + 301",
+"outcome": null,
+"impact": "Typo policy URLs live & indexable",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-15",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P1-05",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-35",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Localisation/FR",
+"category": "Translation/Localisation",
+"task": "Fix visible French grammar errors (« Aux France » etc.)",
+"outcome": null,
+"impact": "Broken French live on key pages",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P1-06",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-36",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Lazy-load Judge.me + Wistia facade (mobile INP 301ms fails CWV)",
+"outcome": "Mobile INP passes",
+"impact": "Core Web Vitals failure on mobile",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P1-07",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-37",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Rewrite titles + meta on top 10 pages (PFAS, sans plastique, 8L/12L)",
+"outcome": null,
+"impact": "Generic titles; no modifiers",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-04",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P2-01",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-38",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Deploy full schema suite (Product, FAQ, Breadcrumb, Org, Review)",
+"outcome": "Rich snippets eligible",
+"impact": "No FAQ/Breadcrumb/Review schema",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-07",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P2-02",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-39",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Domain/Canonicals",
+"task": "Consolidate duplicate PDPs (EN slugs → 301 to FR)",
+"outcome": null,
+"impact": "Five URLs for one product family",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-02",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P2-03",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-40",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "SEO",
+"category": "Site Architecture",
+"task": "Migrate product/page slugs to French (see Slug Migrations)",
+"outcome": null,
+"impact": "EN slugs on a FR store",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-05",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P2-04",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-41",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Publish gravity-filtration hub page (/guide-filtration-gravite, 3,500 words)",
+"outcome": "Ranks non-brand 'filtre à eau par gravité'",
+"impact": "98% branded traffic; no non-brand hub",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-10",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR SEO · P2-05",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-42",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Publish Phoenix Gravity vs Berkey comparative page",
+"outcome": null,
+"impact": "'alternative berkey france' demand",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-09",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P2-06",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-43",
+"market": "France",
+"assignedBy": "CEO",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "CRO",
+"category": "PDP/UX",
+"task": "PDP redesign — answer-first hero + trust strip (lab report + badges)",
+"outcome": "Hero answers + trust above the fold",
+"impact": "Encompasses sticky ATC, gallery trim, reviews-in-buy-box",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-08",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "FR SEO · P2-07",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-44",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Fix desktop CLS (0.22 fail) — reserve image/badge dimensions",
+"outcome": null,
+"impact": "Layout shift fails CWV on desktop",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-02",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P2-08",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-45",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Editorial cluster — PFAS & tap water France",
+"outcome": null,
+"impact": "Most newsworthy 2026 angle (2,900/mo)",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-08-01",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P3-01",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-46",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Editorial cluster — water quality France (chlorine, limescale, lead, nitrates)",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-08-15",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P3-02",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-47",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Site Architecture",
+"category": "Site Architecture",
+"task": "Internal-linking restructure (3 silos + anchors)",
+"outcome": null,
+"impact": "Money pages isolated",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P3-03",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-48",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Vasialai",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Add FAQ to top 5 PDPs (4-6 native-FR Q&A each)",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-07-25",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P3-04",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-49",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Digital PR — PFAS pitch, 8 outlets (lab report exclusive)",
+"outcome": null,
+"impact": "Authority + referring domains",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-08-10",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P3-05",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-50",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Vasialai",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Deploy llms.txt + FR entity page (AI search)",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-08-05",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P3-06",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-51",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "CRO",
+"category": "Landing Page CRO",
+"task": "A/B test PDP hero + bundle pricing",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-08-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P3-07",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-52",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Comparative cluster (5 pages: Brita, Berkefeld, Weeplow, LaVie)",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-09-01",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P4-01",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-53",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Nice",
+"dept": "Website/Shopify",
+"category": "Content/Blog",
+"task": "Build interactive PFAS map of France (linkable asset)",
+"outcome": null,
+"impact": "Passive backlink magnet",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-09-15",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P4-02",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-54",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "Vasialai",
+"dept": "Website/Shopify",
+"category": "Content/Blog",
+"task": "Build 'bottled vs filtered' cost calculator (JS tool)",
+"outcome": null,
+"impact": "Embeddable widget",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-09-10",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P4-03",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-55",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Build NGO partnerships (Générations Cobayes, Surfrider…)",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-09-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P4-04",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "FR-56",
+"market": "France",
+"assignedBy": "Manager",
+"owner": "Rishi",
+"dev": "—",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Set up AI-search monitoring (Otterly / Profound / Peec)",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-09-05",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "FR SEO · P4-05",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-01",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Pricing/Offers",
+"task": "Fix £0.00 strikethrough pricing in listings & Merchant feed",
+"outcome": "Valid prices in snippets & Merchant",
+"impact": "'£0.00 £199.00' live; Merchant disapprovals",
+"priority": "P0",
+"severity": "High",
+"deadline": "2026-06-11",
+"revised": null,
+"status": "In Progress",
+"completion": 30,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Fix discount-app/price template",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-02",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Domain/Hosting",
+"category": "Domain/Canonicals",
+"task": "Decide .com domain — 301 to .co.uk or differentiate",
+"outcome": "One domain strategy executed",
+"impact": ".com has different claims; authority split",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-08",
+"nextAction": "Decide 301 vs differentiate",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-03",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Domain/Canonicals",
+"task": "Confirm canonicals over UTM/variant URLs",
+"outcome": "Clean canonical per product",
+"impact": "?variant=…utm… URLs indexed",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Verify Shopify canonical",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-04",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Vasialai",
+"dept": "Content/Blog",
+"category": "Offers/Lifecycle",
+"task": "Kill 'Winter Sale 26% OFF' banner; noindex the page",
+"outcome": null,
+"impact": "June promo still live from winter",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-07",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Remove banner; noindex/delete",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-05",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Deploy review-snippet schema sitewide",
+"outcome": "Valid review schema live",
+"impact": "REVIEW_SNIPPET only 472 impr",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Add consolidated review schema",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-06",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Vasialai",
+"dept": "Website/Shopify",
+"category": "Site Architecture",
+"task": "Roll new footer template to all inner pages",
+"outcome": null,
+"impact": "Footer hasn't propagated from homepage",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-14",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Propagate footer + hub links",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-07",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Fix homepage title typo 'Clean & healthy Water'",
+"outcome": null,
+"impact": "Title-case error on homepage",
+"priority": "P2",
+"severity": "Low",
+"deadline": "2026-06-08",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Title-case + lead with category",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-08",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Domain/Canonicals",
+"task": "301 duplicate product URLs (flagship ×4, KokoCarb, typos)",
+"outcome": "One canonical per product",
+"impact": "…-1/-copy/-filters/-6-litre dupes",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-17",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "301 all dupes",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-09",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Site Architecture",
+"category": "Site Architecture",
+"task": "Consolidate collection sprawl (6+ share a title)",
+"outcome": "One primary hub; unique titles",
+"impact": "/all /all-collections /all-1 self-compete",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-19",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Keep hub; 301 rest",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-10",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Site Architecture",
+"category": "Site Architecture",
+"task": "Build the gravity collection hub",
+"outcome": "/collections/gravity-water-filters ranks",
+"impact": "No collection ranks head terms; flagship does category duty",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-22",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Build + interlink hub",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-11",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Rewrite quick-win titles/metas (pos 4–10)",
+"outcome": null,
+"impact": "gravity 7.2, stainless 5.2, gravity-uk 7.5",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "In Progress",
+"completion": 15,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Front-load matched terms",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-12",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Fix 'best gravity water filter uk' snippet (pos 4.8, 0 clk)",
+"outcome": null,
+"impact": "Ranks pos 4.8 with zero clicks",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Rewrite title + meta to intent",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-13",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Resolve 'stainless steel water filter' cannibalisation",
+"outcome": "Stands page stops competing flagship",
+"impact": "Accessory page outranks flagship term",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Repoint internal links",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-14",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Vasialai",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "De-index test/preview pages",
+"outcome": null,
+"impact": "product-test-page, _preview indexed",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-06-12",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "noindex/delete + drop sitemap",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-15",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Vasialai",
+"dept": "Technical SEO",
+"category": "Domain/Canonicals",
+"task": "Merge duplicate utility pages (faq/faqs, contact/contact-us)",
+"outcome": null,
+"impact": "Both variants live & indexable",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-06-15",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Keep one; 301 duplicate",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-16",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Improve generic image alt text & filenames",
+"outcome": null,
+"impact": "alt='water-filters' on products",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Descriptive keyworded alts",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-17",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Domain/Canonicals",
+"task": "Review US-impression geo-targeting / hreflang",
+"outcome": null,
+"impact": "US 13,379 impr 0.82% CTR drags blended",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-08",
+"nextAction": "Confirm UK geo; hreflang",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-18",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Landing Page CRO",
+"task": "Build /fluoride-removal landing page (KokoCarb + POSTreat)",
+"outcome": "ASA-safe choice-framed fluoride LP",
+"impact": "139 fluoride queries ~2,537 impr stranded",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-24",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": "PT-01",
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Build LP linking POSTreat",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-19",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Content/Blog",
+"category": "Landing Page CRO",
+"task": "Build postcode-area fluoride checker (interactive)",
+"outcome": null,
+"impact": "Engagement hook for fluoride intent",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-28",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Postcode → fluoridation status",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-20",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "PDP/UX",
+"category": "Pricing/Offers",
+"task": "Rebuild KokoCarb page + subscribe-and-save",
+"outcome": "Proper cartridge page + subscription",
+"impact": "Highest-LTV SKU, ~0 organic",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-24",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Rebuild + add subscription",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-21",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Publish plastic-free / microplastics content",
+"outcome": null,
+"impact": "171 queries pos 9.1; converts 3–7×",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-23",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Write ASA-safe article + on-page",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-22",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Publish 'best gravity water filter UK' buyer's guide",
+"outcome": null,
+"impact": "Commercial-investigation demand pg 2",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-26",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Guide linking hub + flagship",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-23",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "SEO",
+"category": "On-page SEO",
+"task": "Optimise generic cartridge terms on-page",
+"outcome": null,
+"impact": "'carbon cartridges…' pos 11.3 / 0 clk",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-22",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Target replacement terms",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-24",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Site Architecture",
+"category": "Site Architecture",
+"task": "Roll out 4-tier internal-linking map",
+"outcome": null,
+"impact": "Money pages isolated; flagship absorbs",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-25",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Wire hub→products→content→cartridges",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-25",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Content/Blog",
+"category": "Content/Blog",
+"task": "Create comparison / 'alternative' content",
+"outcome": null,
+"impact": "'Berkey alternative UK' demand",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-27",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "vs British Berkefeld/Doulton",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-26",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Legal/Compliance",
+"category": "Compliance/Claims",
+"task": "Consolidate claims & certifications (.com align)",
+"outcome": null,
+"impact": "'1978/40+/50 years' & '99.9/99.99%' vary",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-21",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "Yes",
+"lastUpdate": "2026-06-08",
+"nextAction": "One substantiated figure",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-27",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Technical SEO",
+"category": "Schema/Technical SEO",
+"task": "Measure & fix Core Web Vitals (flagship + hub)",
+"outcome": null,
+"impact": "Flagged, not yet field-measured",
+"priority": "P3",
+"severity": "Medium",
+"deadline": "2026-06-28",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Capture field data; remediate",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-28",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Stand up the measurement loop (GA4/GSC/Ads)",
+"outcome": "Live KPI loop on real data",
+"impact": "Dashboard on sample data; no live loop",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-26",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Track non-brand share, flagship pos",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-29",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Monitor AI-Overview / fan-out visibility",
+"outcome": null,
+"impact": "~226 conversational q / 0.3% CTR",
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-06-30",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK SEO #1",
+"recurIssue": "No",
+"lastUpdate": "2026-06-08",
+"nextAction": "Track brand presence in AI answers",
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-30",
+"market": "UK",
+"assignedBy": "CEO",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Fix Meta CAPI + Consent Mode v2 + GA4 server-side + de-dup + UTMs",
+"outcome": "Trustworthy Meta numbers",
+"impact": "Decides Meta cut-vs-fix; Meta self-reports ~3× its credit",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-31",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Stand up platform vs Triple Whale vs Shopify + blended MER dashboard",
+"outcome": "One source of truth for spend decisions",
+"impact": "Stop deciding budget on platform ROAS alone",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-32",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Google Ads",
+"category": "Budget/Pacing",
+"task": "Pause MaxCV + £0-conversion Google campaigns; add negatives (reverse osmosis, water purifier)",
+"outcome": null,
+"impact": "Stop wasted spend",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-33",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Google Ads",
+"category": "Campaign Setup",
+"task": "Apply PMax brand-exclusion list (stop PMax eating Brand)",
+"outcome": null,
+"impact": "Reduce PMax brand-leakage",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-16",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-34",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Google Ads",
+"category": "Budget/Pacing",
+"task": "Lift bids / loosen tROAS on Brand+Products Search (loses 88% IS to rank)",
+"outcome": null,
+"impact": "Capture profitable rank-limited volume",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-35",
+"market": "UK",
+"assignedBy": "CEO",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Google Ads",
+"category": "Campaign Setup",
+"task": "Launch KokoCarb Shopping + Brand Search (RSA) pointed at the cartridge PDP",
+"outcome": null,
+"impact": "Lowest-CAC, first-order-profitable layer",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-36",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Google Ads",
+"category": "Campaign Setup",
+"task": "Non-Brand high-intent Search + POSTreat/Fluoride + Berkey conquest (choice-framed)",
+"outcome": null,
+"impact": null,
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-01",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-37",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Google Ads",
+"category": "Campaign Setup",
+"task": "Rebuild PMax (segmented, brand-excluded, new image/video assets)",
+"outcome": null,
+"impact": "Uses new creatives (UK-45/47/48)",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-38",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Meta Ads",
+"category": "Campaign Setup",
+"task": "Restructure Meta; pause traffic/PV/tester + carousels + the French ad",
+"outcome": null,
+"impact": "Meta on probation — clean the structure first",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-17",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-39",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Meta Ads",
+"category": "Campaign Setup",
+"task": "Launch Meta Reorder campaign (purchasers 10–12 mo), creative koko_1, CPA cap £25",
+"outcome": null,
+"impact": null,
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-40",
+"market": "UK",
+"assignedBy": "CEO",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Meta Ads",
+"category": "Reporting",
+"task": "Run geo / holdout lift test (Meta scale decision gates on this)",
+"outcome": null,
+"impact": "Never scale Meta on self-reported ROAS",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-07-15",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-41",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Meta Ads",
+"category": "Budget/Pacing",
+"task": "Scale or cut Meta on the lift result (→~40% UGC if positive; else 15–20% → Google+reorder)",
+"outcome": null,
+"impact": null,
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-25",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-42",
+"market": "UK",
+"assignedBy": "CEO",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "Website/Shopify",
+"category": "Pricing/Offers",
+"task": "Implement Subscribe&Save (25% off, 12-mo) on KokoCarb PDP; launch Subscribe&Save campaign (koko_2) + Klaviyo flows",
+"outcome": "Recurring revenue live",
+"impact": "Lowest-CAC retention layer",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-25",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Overlaps UK-20 (KokoCarb rebuild)"
+},
+{
+"id": "UK-43",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Legal/Compliance",
+"category": "Compliance/Claims",
+"task": "Qualify / relocate the fluoride claim to POSTreat (choice-framed, ASA-safe)",
+"outcome": null,
+"impact": "ASA / advertising-claim compliance",
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-18",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "Yes",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-44",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Nice",
+"dept": "CRO",
+"category": "Landing Page CRO",
+"task": "Build sale landing page + homepage hero / PDP badges / 100-day USP / sticky bar",
+"outcome": null,
+"impact": "Supports the four sales on the plan",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-05",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+},
+{
+"id": "UK-45",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Divya",
+"dept": "Meta Ads",
+"category": "Creative",
+"task": "Produce Filter-systems ad creatives (Taste “Water, but better.”; Durability “The British gravity filter.”; Checklist)",
+"outcome": "Ready-to-run static/image ads + paste copy",
+"impact": null,
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-22",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Creative — Divya & Anand"
+},
+{
+"id": "UK-46",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Divya",
+"dept": "Meta Ads",
+"category": "Creative",
+"task": "Produce KokoCarb ad creatives (Reorder “Time for a fresh filter.”; Subscribe “Subscribe & save 25%.”)",
+"outcome": null,
+"impact": null,
+"priority": "P1",
+"severity": "High",
+"deadline": "2026-06-22",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Creative — Divya & Anand"
+},
+{
+"id": "UK-47",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Divya",
+"dept": "Meta Ads",
+"category": "Creative",
+"task": "Produce Sale Pack creatives — 4 sales (Flash 30%, Summer 26%, +2) + RSA headline sets + 1 reusable sale video",
+"outcome": null,
+"impact": "Flash sale starts 10-Jul",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-05",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Creative — Divya & Anand"
+},
+{
+"id": "UK-48",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Divya",
+"dept": "Meta Ads",
+"category": "Creative",
+"task": "Produce 12 UGC / video creatives (U1–U12: honest review, taste test, unboxing, reorder…) per audit §18 scripts",
+"outcome": null,
+"impact": "UGC-led Meta probation",
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-07-10",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Creative — Divya & Anand"
+},
+{
+"id": "UK-49",
+"market": "UK",
+"assignedBy": "Manager",
+"owner": "Anandraj",
+"dev": "Divya",
+"dept": "Meta Ads",
+"category": "Creative",
+"task": "Build video hook library + creator brief & usage rights",
+"outcome": null,
+"impact": null,
+"priority": "P3",
+"severity": "Low",
+"deadline": "2026-07-12",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "No",
+"recurring": "One-off",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": "Creative — Divya & Anand"
+},
+{
+"id": "UK-50",
+"market": "UK",
+"assignedBy": "CEO",
+"owner": "Anandraj",
+"dev": "—",
+"dept": "Reporting/Analytics",
+"category": "Reporting",
+"task": "Weekly performance report: platform vs TW vs Shopify, blended MER, CAC, AOV, channel ROAS/CPA/CTR, Meta freq, retention/subscription take-up",
+"outcome": null,
+"impact": null,
+"priority": "P2",
+"severity": "Medium",
+"deadline": "2026-06-20",
+"revised": null,
+"status": "Not Started",
+"completion": 0,
+"done": false,
+"dependency": null,
+"blocker": null,
+"esc": "No",
+"ceo": "Yes",
+"recurring": "Weekly",
+"source": "UK Perf/CRO Audit · Jun 2026",
+"recurIssue": "No",
+"lastUpdate": "2026-06-09",
+"nextAction": null,
+"proof": null,
+"closure": null,
+"remarks": null
+}
+];
+
+const SNAP = new Date("2026-06-09T00:00:00");
+const SNAP_LABEL = "Tue, 09 Jun 2026";
+const TARGET_WEEKLY = 18;
+const CLOSED = new Set(["Completed", "Cancelled", "Deferred"]);
+
+const MK = {
+  US:     { label: "United States", who: "Vijaykumar", site: "phoenixgravity.com",        c: "#2563EB", soft: "#EAF1FE" },
+  UK:     { label: "United Kingdom", who: "Anandraj",  site: "phoenixwaterfilters.co.uk", c: "#B91C1C", soft: "#FCECEC" },
+  France: { label: "France",         who: "Rishi",     site: "phoenixwaterfilters.fr",    c: "#0E8C6E", soft: "#E5F4EF" },
+};
+const FLAGSTYLE = {
+  "Critical overdue": { c: "#7F1D1D", bg: "#F6C9C9", dot: "#7F1D1D" },
+  "Overdue":          { c: "#B91C1C", bg: "#FCE4E4", dot: "#B91C1C" },
+  "Blocked":          { c: "#B91C1C", bg: "#FCE4E4", dot: "#B91C1C" },
+  "Due soon":         { c: "#B45309", bg: "#FCEFD6", dot: "#D97706" },
+  "Delayed":          { c: "#B45309", bg: "#FCEFD6", dot: "#D97706" },
+  "Waiting":          { c: "#7C3AED", bg: "#F1E8FE", dot: "#7C3AED" },
+  "On track":         { c: "#1D4ED8", bg: "#E8EEFC", dot: "#3B82F6" },
+  "Completed":        { c: "#15803D", bg: "#E3F4E8", dot: "#15803D" },
+  "Cancelled":        { c: "#64748B", bg: "#EEF1F6", dot: "#94A3B8" },
+  "Deferred":         { c: "#64748B", bg: "#EEF1F6", dot: "#94A3B8" },
+};
+const CYCLES = [
+  { n: 1, date: "2026-04-10", market: "France", score: 5.2, note: "Baseline" },
+  { n: 2, date: "2026-05-02", market: "France", score: 6.8, note: "First fixes" },
+  { n: 3, date: "2026-05-16", market: "France", score: 7.6, note: "Homepage rework" },
+  { n: 4, date: "2026-06-03", market: "France", score: 7.7, note: "Re-verify" },
+  { n: 5, date: "2026-06-08", market: "France", score: 7.1, note: "+ landing pages" },
+  { n: 1, date: "2026-06-01", market: "US",     score: null, note: "CRO + SEO baseline" },
+  { n: 1, date: "2026-06-08", market: "UK",     score: null, note: "SEO baseline" },
+  { n: 6, date: "2026-06-09", market: "France", score: null, note: "SEO audit - 27 actions onboarded" },
+  { n: 2, date: "2026-06-09", market: "UK", score: null, note: "Performance & CRO audit + execution plan" },
+];
+
+const d2 = (n) => Math.round(n);
+function parseD(s) { return s ? new Date(s + "T00:00:00") : null; }
+function fmtD(s) {
+  const x = parseD(s); if (!x) return "—";
+  return x.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+}
+function enrich(t) {
+  const eff = t.revised || t.deadline || null;
+  const effDate = parseD(eff);
+  const closed = CLOSED.has(t.status);
+  const days = effDate && !closed ? Math.round((effDate - SNAP) / 864e5) : null;
+  const overdue = !!(effDate && !closed && effDate < SNAP);
+  const ovdDays = overdue ? Math.round((SNAP - effDate) / 864e5) : 0;
+  let flag = "On track";
+  if (t.status === "Completed") flag = "Completed";
+  else if (t.status === "Cancelled" || t.status === "Deferred") flag = t.status;
+  else if (t.status === "Blocked") flag = "Blocked";
+  else if (overdue && t.priority === "P0") flag = "Critical overdue";
+  else if (overdue) flag = "Overdue";
+  else if (t.status === "Delayed") flag = "Delayed";
+  else if (days !== null && days <= 1) flag = "Due soon";
+  else if (t.status === "Waiting for Input") flag = "Waiting";
+  return { ...t, eff, effDate, closed, days, overdue, ovdDays, flag };
+}
+function computeHealth(list) {
+  const open = list.filter((t) => !t.closed).length;
+  const done = list.filter((t) => t.status === "Completed" && t.effDate && t.closure);
+  const onArr = done.map((t) => (parseD(t.closure) <= t.effDate ? 1 : 0));
+  const ontime = onArr.length ? onArr.reduce((a, b) => a + b, 0) / onArr.length : 0;
+  const overdue = list.filter((t) => t.overdue).length;
+  const blocked = list.filter((t) => t.status === "Blocked").length;
+  const c7d = list.filter((t) => t.status === "Completed" && t.closure && parseD(t.closure) >= new Date(SNAP - 6 * 864e5)).length;
+  const ovRat = open ? Math.min(overdue / open, 1) : 0;
+  const blkRat = open ? Math.min(blocked / open, 1) : 0;
+  const vel = Math.min(c7d / TARGET_WEEKLY, 1);
+  const score = d2(100 * (0.4 * ontime + 0.3 * (1 - ovRat) + 0.2 * (1 - blkRat) + 0.1 * vel));
+  return { score, ontime, open, overdue, blocked, c7d };
+}
+function verdict(s) {
+  if (s >= 85) return { t: "Strong", c: "#15803D", bg: "#E3F4E8" };
+  if (s >= 70) return { t: "Healthy", c: "#1D4ED8", bg: "#E8EEFC" };
+  if (s >= 55) return { t: "Needs attention", c: "#B45309", bg: "#FCEFD6" };
+  return { t: "At risk", c: "#B91C1C", bg: "#FCE4E4" };
+}
+
+function Gauge({ value }) {
+  const v = verdict(value);
+  const R = 78, CX = 95, CY = 95, sw = 15;
+  const a0 = Math.PI, a1 = 0;
+  const ang = a0 + (a1 - a0) * (value / 100);
+  const pt = (a) => [CX + R * Math.cos(a), CY - R * Math.sin(a)];
+  const [sx, sy] = pt(a0), [ex, ey] = pt(a1), [vx, vy] = pt(ang);
+  const big = value > 50 ? 1 : 0;
+  return (
+    <svg viewBox="0 0 190 118" width="100%" style={{ maxWidth: 230 }} role="img" aria-label={"Health score " + value}>
+      <path d={`M ${sx} ${sy} A ${R} ${R} 0 1 1 ${ex} ${ey}`} fill="none" stroke="#E2E8F2" strokeWidth={sw} strokeLinecap="round" />
+      <path d={`M ${sx} ${sy} A ${R} ${R} 0 ${big} 1 ${vx} ${vy}`} fill="none" stroke={v.c} strokeWidth={sw} strokeLinecap="round" className="pg-arc" />
+      <text x={CX} y={CY - 6} textAnchor="middle" style={{ font: "700 40px 'Space Grotesk',sans-serif", fill: "#0B1F38" }}>{value}</text>
+      <text x={CX} y={CY + 14} textAnchor="middle" style={{ font: "600 10px 'JetBrains Mono',monospace", fill: "#64748B", letterSpacing: ".1em" }}>/ 100</text>
+    </svg>
+  );
+}
+
+function Stat({ label, value, accent, tone }) {
+  const color = tone === "bad" && value > 0 ? "#B91C1C" : tone === "good" && value > 0 ? "#15803D" : "#0B1F38";
+  return (
+    <div className="pg-chip">
+      <div className="pg-chip-v" style={{ color }}>{value}</div>
+      <div className="pg-chip-l">{label}</div>
+      {accent && <span className="pg-chip-bar" style={{ background: accent }} />}
+    </div>
+  );
+}
+
+export default function App() {
+  const all = useMemo(() => TASKS.map(enrich), []);
+  const global = useMemo(() => computeHealth(all), [all]);
+  const v = verdict(global.score);
+
+  const perMarket = useMemo(() => {
+    const o = {};
+    Object.keys(MK).forEach((m) => {
+      const list = all.filter((t) => t.market === m);
+      const open = list.filter((t) => !t.closed).length;
+      const done = list.filter((t) => t.status === "Completed").length;
+      const completedWithDue = list.filter((t) => t.status === "Completed" && t.effDate && t.closure);
+      const ot = completedWithDue.length ? Math.round(100 * completedWithDue.filter((t) => parseD(t.closure) <= t.effDate).length / completedWithDue.length) : null;
+      o[m] = {
+        total: list.length, open, done,
+        overdue: list.filter((t) => t.overdue).length,
+        p0: list.filter((t) => t.priority === "P0" && !t.closed).length,
+        blocked: list.filter((t) => t.status === "Blocked").length,
+        legal: list.filter((t) => t.category === "Legal/GDPR" && !t.closed).length,
+        ot,
+        top: list.filter((t) => !t.closed && (t.ovdDays > 0 || t.status === "Blocked" || t.priority === "P0"))
+                 .sort((a, b) => (b.priority === "P0") - (a.priority === "P0") || b.ovdDays - a.ovdDays).slice(0, 3),
+      };
+    });
+    return o;
+  }, [all]);
+
+  const kpis = useMemo(() => ({
+    total: all.length,
+    open: all.filter((t) => !t.closed).length,
+    overdue: all.filter((t) => t.overdue).length,
+    sev: all.filter((t) => t.ovdDays > 3).length,
+    blocked: all.filter((t) => t.status === "Blocked").length,
+    p0: all.filter((t) => t.priority === "P0" && !t.closed).length,
+    legal: all.filter((t) => t.category === "Legal/GDPR" && !t.closed).length,
+    esc: all.filter((t) => t.esc === "Yes" && !t.closed).length,
+    ontime: Math.round(global.ontime * 100),
+  }), [all, global]);
+
+  const owners = useMemo(() => {
+    const names = ["Vijaykumar", "Anandraj", "Rishi", "Divya"];
+    return names.map((n) => {
+      const list = all.filter((t) => t.owner === n);
+      const overdue = list.filter((t) => t.overdue).length;
+      const blocked = list.filter((t) => t.status === "Blocked").length;
+      return {
+        n, total: list.length, open: list.filter((t) => !t.closed).length, overdue, blocked,
+        done: list.filter((t) => t.status === "Completed").length,
+        st: blocked > 0 || overdue > 2 ? "At risk" : overdue > 0 ? "Watch" : "OK",
+      };
+    }).filter((o) => o.total > 0).sort((a, b) => b.overdue - a.overdue);
+  }, [all]);
+
+  const devs = useMemo(() => ["Nice", "Vasialai", "Divya"].map((n) => {
+    const list = all.filter((t) => t.dev === n);
+    return { n, label: n === "Nice" ? "Nice · senior" : n === "Vasialai" ? "Vasialai · junior" : "Divya · creative",
+      assigned: list.length, open: list.filter((t) => !t.closed).length, overdue: list.filter((t) => t.overdue).length };
+  }), [all]);
+
+  const reaudit = useMemo(() => Object.keys(MK).map((m) => {
+    const cs = CYCLES.filter((c) => c.market === m);
+    const last = cs.reduce((mx, c) => (parseD(c.date) > mx ? parseD(c.date) : mx), new Date(0));
+    const next = new Date(last.getTime() + 3 * 864e5);
+    const repeat = all.filter((t) => t.market === m && t.recurIssue === "Yes").length;
+    return { m, last, next, due: next < SNAP, repeat };
+  }), [all]);
+
+  // CEO review flags (shared persistence)
+  const [flags, setFlags] = useState({});
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await window.storage.list("flag:", true);
+        if (r && r.keys) {
+          const f = {};
+          for (const k of r.keys) { try { const g = await window.storage.get(k, true); if (g && g.value === "1") f[k.slice(5)] = true; } catch (e) {} }
+          setFlags(f);
+        }
+      } catch (e) {}
+    })();
+  }, []);
+  async function toggleFlag(id) {
+    const nv = !flags[id];
+    setFlags((p) => ({ ...p, [id]: nv }));
+    try { if (nv) await window.storage.set("flag:" + id, "1", true); else await window.storage.delete("flag:" + id, true); } catch (e) {}
+  }
+
+  // filters
+  const [mkt, setMkt] = useState("All");
+  const [stat, setStat] = useState("Open");
+  const [pri, setPri] = useState("All");
+  const [owner, setOwner] = useState("All");
+  const [q, setQ] = useState("");
+  const [flaggedOnly, setFlaggedOnly] = useState(false);
+  const [sort, setSort] = useState("priority");
+  const [openRow, setOpenRow] = useState(null);
+
+  const rows = useMemo(() => {
+    let r = all.slice();
+    if (mkt !== "All") r = r.filter((t) => t.market === mkt);
+    if (stat === "Open") r = r.filter((t) => !t.closed);
+    else if (stat === "Overdue") r = r.filter((t) => t.overdue);
+    else if (stat === "Completed") r = r.filter((t) => t.status === "Completed");
+    else if (stat !== "All") r = r.filter((t) => t.status === stat);
+    if (pri !== "All") r = r.filter((t) => t.priority === pri);
+    if (owner !== "All") r = r.filter((t) => t.owner === owner);
+    if (flaggedOnly) r = r.filter((t) => flags[t.id]);
+    if (q.trim()) { const s = q.toLowerCase(); r = r.filter((t) => (t.task + " " + t.id + " " + (t.category || "") + " " + (t.owner || "")).toLowerCase().includes(s)); }
+    const prank = { P0: 0, P1: 1, P2: 2, P3: 3 };
+    r.sort((a, b) => {
+      if (sort === "priority") return (prank[a.priority] - prank[b.priority]) || (b.ovdDays - a.ovdDays);
+      if (sort === "due") return (a.effDate ? a.effDate : 9e15) - (b.effDate ? b.effDate : 9e15);
+      if (sort === "overdue") return b.ovdDays - a.ovdDays;
+      return a.id.localeCompare(b.id);
+    });
+    return r;
+  }, [all, mkt, stat, pri, owner, q, flaggedOnly, flags, sort]);
+
+  const topRisks = useMemo(() => all.filter((t) => !t.closed && (t.ovdDays > 3 || t.status === "Blocked" || (t.priority === "P0")))
+    .sort((a, b) => (a.priority === "P0" ? -1 : 0) - (b.priority === "P0" ? -1 : 0) || b.ovdDays - a.ovdDays).slice(0, 7), [all]);
+  const flagCount = Object.values(flags).filter(Boolean).length;
+  const owNames = ["Vijaykumar", "Anandraj", "Rishi", "Divya", "Nice", "Vasialai"];
+
+  return (
+    <div className="pg-root">
+      <style>{CSS}</style>
+
+      <header className="pg-head">
+        <div className="pg-head-l">
+          <div className="pg-mark"><span className="pg-drop" />PHOENIX&nbsp;GRAVITY</div>
+          <div className="pg-sub">Global Execution Command · US · UK · France</div>
+        </div>
+        <div className="pg-head-r">
+          <span className="pg-asof">As of {SNAP_LABEL}</span>
+          <span className="pg-cad">Re-audit every 3 days</span>
+        </div>
+      </header>
+
+      <main className="pg-main">
+        {/* HERO */}
+        <section className="pg-hero">
+          <div className="pg-gauge-card">
+            <div className="pg-card-eyebrow">Global execution health</div>
+            <Gauge value={global.score} />
+            <div className="pg-verdict" style={{ color: v.c, background: v.bg }}>{v.t}</div>
+            <p className="pg-interp">
+              {global.score >= 70
+                ? "On track across the three markets. Clear overdue and blocked work to climb higher."
+                : "A fresh UK & France audit backlog plus open EU legal items. Triage P0s, blockers and the critical-legal column first."}
+            </p>
+          </div>
+          <div className="pg-kpis">
+            <Stat label="Total tasks" value={kpis.total} />
+            <Stat label="Open" value={kpis.open} />
+            <Stat label="Overdue" value={kpis.overdue} tone="bad" />
+            <Stat label="Blocked" value={kpis.blocked} tone="bad" />
+            <Stat label="P0 open" value={kpis.p0} tone="bad" />
+            <Stat label="Critical legal" value={kpis.legal} tone="bad" />
+            <Stat label="Escalations" value={kpis.esc} tone="bad" />
+            <Stat label="On-time %" value={kpis.ontime + "%"} tone="good" />
+          </div>
+        </section>
+
+        {/* MARKET TRIPTYCH */}
+        <section className="pg-tri">
+          {Object.keys(MK).map((m) => {
+            const d = perMarket[m], info = MK[m];
+            return (
+              <article key={m} className="pg-mcard" style={{ borderTopColor: info.c }}>
+                <div className="pg-mhead">
+                  <div>
+                    <div className="pg-mname" style={{ color: info.c }}>{info.label}</div>
+                    <div className="pg-mwho">{info.who} · {info.site}</div>
+                  </div>
+                  <div className="pg-mopen" style={{ color: info.c }}>{d.open}<span>open</span></div>
+                </div>
+                <div className="pg-mstats">
+                  <span className={d.overdue ? "bad" : ""}>{d.overdue} overdue</span>
+                  <span className={d.p0 ? "bad" : ""}>{d.p0} P0</span>
+                  <span className={d.blocked ? "bad" : ""}>{d.blocked} blocked</span>
+                  {d.legal > 0 && <span className="legal">{d.legal} legal</span>}
+                  <span>{d.ot === null ? "—" : d.ot + "% on-time"}</span>
+                </div>
+                <div className="pg-mtop">
+                  {d.top.length === 0 && <div className="pg-mtop-ok">No critical or overdue items.</div>}
+                  {d.top.map((t) => (
+                    <div key={t.id} className="pg-mtop-row" onClick={() => { setMkt(m); document.getElementById("pg-table").scrollIntoView({ behavior: "smooth" }); }}>
+                      <span className="pg-pri" data-p={t.priority}>{t.priority}</span>
+                      <span className="pg-mtop-task">{t.task}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="pg-mfoot">
+                  <div className="pg-mbar"><span style={{ width: (d.total ? Math.round(100 * d.done / d.total) : 0) + "%", background: info.c }} /></div>
+                  <span>{d.done}/{d.total} done</span>
+                </div>
+              </article>
+            );
+          })}
+        </section>
+
+        {/* RISK STRIP */}
+        <section className="pg-risk">
+          <div className="pg-risk-head">
+            <h2>Needs your attention</h2>
+            <span className="pg-risk-sub">P0 · overdue 3 days+ · blocked</span>
+          </div>
+          <div className="pg-risk-list">
+            {topRisks.map((t) => {
+              const fs = FLAGSTYLE[t.flag];
+              return (
+                <div key={t.id} className="pg-risk-row">
+                  <span className="pg-rid">{t.id}</span>
+                  <span className="pg-rmkt" style={{ background: MK[t.market].soft, color: MK[t.market].c }}>{t.market}</span>
+                  <span className="pg-rtask">{t.task}</span>
+                  <span className="pg-rowner">{t.owner}{t.dev && t.dev !== "—" ? " · " + t.dev : ""}</span>
+                  <span className="pg-rflag" style={{ color: fs.c, background: fs.bg }}><i style={{ background: fs.dot }} />{t.flag}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* SCORECARD + DEV + REAUDIT */}
+        <section className="pg-three">
+          <div className="pg-panel">
+            <div className="pg-panel-h">Owner scorecard</div>
+            <table className="pg-mini">
+              <thead><tr><th>Owner</th><th>Open</th><th>Overdue</th><th>Blocked</th><th>Status</th></tr></thead>
+              <tbody>
+                {owners.map((o) => (
+                  <tr key={o.n}>
+                    <td className="l">{o.n}</td><td>{o.open}</td>
+                    <td className={o.overdue ? "bad" : ""}>{o.overdue}</td>
+                    <td className={o.blocked ? "bad" : ""}>{o.blocked}</td>
+                    <td><span className={"pg-tag " + (o.st === "At risk" ? "r" : o.st === "Watch" ? "a" : "g")}>{o.st}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="pg-panel">
+            <div className="pg-panel-h">Build & creative load</div>
+            <table className="pg-mini">
+              <thead><tr><th>Developer</th><th>Assigned</th><th>Open</th><th>Overdue</th></tr></thead>
+              <tbody>
+                {devs.map((dv) => (
+                  <tr key={dv.n}><td className="l">{dv.label}</td><td>{dv.assigned}</td><td>{dv.open}</td><td className={dv.overdue ? "bad" : ""}>{dv.overdue}</td></tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="pg-legalcall">
+              <span>Critical legal open (France)</span><b>{perMarket.France.legal}</b>
+            </div>
+          </div>
+          <div className="pg-panel">
+            <div className="pg-panel-h">Re-audit cadence</div>
+            <div className="pg-reaudit">
+              {reaudit.map((r) => (
+                <div key={r.m} className="pg-ra-row">
+                  <span className="pg-ra-m" style={{ color: MK[r.m].c }}>{r.m}</span>
+                  <span className="pg-ra-d">last {r.last.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}</span>
+                  <span className={"pg-ra-s " + (r.due ? "due" : "ok")}>{r.due ? "DUE" : "next " + r.next.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}</span>
+                  {r.repeat > 0 && <span className="pg-ra-rep">{r.repeat} repeat</span>}
+                </div>
+              ))}
+            </div>
+            <div className="pg-spark">
+              <div className="pg-spark-cap">France audit score</div>
+              <svg viewBox="0 0 220 60" width="100%" className="pg-spark-svg" aria-label="France score trend">
+                {(() => {
+                  const fc = CYCLES.filter((c) => c.market === "France" && c.score != null);
+                  const xs = fc.map((_, i) => 12 + i * (196 / (fc.length - 1)));
+                  const ys = fc.map((c) => 52 - ((c.score - 5) / 3) * 40);
+                  const dpath = xs.map((x, i) => (i ? "L" : "M") + x + " " + ys[i]).join(" ");
+                  return (<>
+                    <path d={dpath} fill="none" stroke="#0E8C6E" strokeWidth="2.5" />
+                    {fc.map((c, i) => (<g key={i}>
+                      <circle cx={xs[i]} cy={ys[i]} r="3.2" fill="#0E8C6E" />
+                      <text x={xs[i]} y={ys[i] - 7} textAnchor="middle" style={{ font: "600 9px 'JetBrains Mono',monospace", fill: "#0B1F38" }}>{c.score}</text>
+                    </g>))}
+                  </>);
+                })()}
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        {/* CONTROLS + TABLE */}
+        <section className="pg-table-wrap" id="pg-table">
+          <div className="pg-controls">
+            <div className="pg-mkt-chips">
+              {["All", "US", "UK", "France"].map((m) => (
+                <button key={m} className={"pg-chipbtn" + (mkt === m ? " on" : "")}
+                  style={mkt === m && m !== "All" ? { background: MK[m].c, borderColor: MK[m].c, color: "#fff" } : {}}
+                  onClick={() => setMkt(m)}>{m}</button>
+              ))}
+            </div>
+            <div className="pg-selects">
+              <label>Status
+                <select value={stat} onChange={(e) => setStat(e.target.value)}>
+                  {["Open", "Overdue", "All", "Not Started", "In Progress", "Blocked", "Waiting for Input", "Delayed", "Completed"].map((s) => <option key={s}>{s}</option>)}
+                </select>
+              </label>
+              <label>Priority
+                <select value={pri} onChange={(e) => setPri(e.target.value)}>
+                  {["All", "P0", "P1", "P2", "P3"].map((s) => <option key={s}>{s}</option>)}
+                </select>
+              </label>
+              <label>Owner
+                <select value={owner} onChange={(e) => setOwner(e.target.value)}>
+                  {["All", ...owNames].map((s) => <option key={s}>{s}</option>)}
+                </select>
+              </label>
+              <label>Sort
+                <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                  <option value="priority">Priority</option><option value="due">Due date</option>
+                  <option value="overdue">Most overdue</option><option value="id">Task ID</option>
+                </select>
+              </label>
+            </div>
+            <div className="pg-search-wrap">
+              <input className="pg-search" placeholder="Search tasks…" value={q} onChange={(e) => setQ(e.target.value)} />
+              <button className={"pg-flagtog" + (flaggedOnly ? " on" : "")} onClick={() => setFlaggedOnly((x) => !x)} title="Show only items you flagged for review">★ Flagged {flagCount ? "(" + flagCount + ")" : ""}</button>
+            </div>
+          </div>
+
+          <div className="pg-count">{rows.length} task{rows.length === 1 ? "" : "s"}</div>
+
+          <div className="pg-table">
+            <div className="pg-tr pg-th">
+              <span className="c-flag" />
+              <span className="c-id">ID</span>
+              <span className="c-mkt">Market</span>
+              <span className="c-task">Task</span>
+              <span className="c-own">Owner / Dev</span>
+              <span className="c-pri">Pri</span>
+              <span className="c-due">Due</span>
+              <span className="c-status">Flag</span>
+            </div>
+            {rows.map((t) => {
+              const fs = FLAGSTYLE[t.flag];
+              const open = openRow === t.id;
+              return (
+                <div key={t.id} className={"pg-rowgroup" + (open ? " open" : "")}>
+                  <div className="pg-tr" onClick={() => setOpenRow(open ? null : t.id)}>
+                    <button className={"c-flag star" + (flags[t.id] ? " on" : "")} onClick={(e) => { e.stopPropagation(); toggleFlag(t.id); }} aria-label="Flag for review">★</button>
+                    <span className="c-id mono">{t.id}</span>
+                    <span className="c-mkt"><span className="pg-mkpill" style={{ background: MK[t.market].soft, color: MK[t.market].c }}>{t.market}</span></span>
+                    <span className="c-task">{t.task}{t.recurIssue === "Yes" && <span className="pg-repeat" title="Recurring issue — a fix that didn't hold">↺ repeat</span>}</span>
+                    <span className="c-own">{t.owner}{t.dev && t.dev !== "—" ? <em> · {t.dev}</em> : ""}</span>
+                    <span className="c-pri"><span className="pg-pri" data-p={t.priority}>{t.priority}</span></span>
+                    <span className="c-due mono">{fmtD(t.eff)}{t.revised ? "*" : ""}</span>
+                    <span className="c-status"><span className="pg-flagpill" style={{ color: fs.c, background: fs.bg }}><i style={{ background: fs.dot }} />{t.flag}</span></span>
+                  </div>
+                  {open && (
+                    <div className="pg-detail">
+                      <div className="pg-d-grid">
+                        <div><label>Expected outcome</label><p>{t.outcome || "—"}</p></div>
+                        <div><label>Why it matters</label><p>{t.impact || "—"}</p></div>
+                        <div><label>Next action</label><p>{t.nextAction || "—"}</p></div>
+                        <div><label>Dependency / blocker</label><p>{t.blocker || t.dependency || "—"}</p></div>
+                        <div><label>Department · category</label><p>{t.dept} · {t.category}</p></div>
+                        <div><label>Audit source</label><p>{t.source || "—"}{t.completion ? " · " + t.completion + "% complete" : ""}</p></div>
+                      </div>
+                      {t.remarks && <div className="pg-d-rem"><label>Remarks</label> {t.remarks}</div>}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {rows.length === 0 && <div className="pg-empty">No tasks match these filters. Clear a filter to see more.</div>}
+          </div>
+        </section>
+      </main>
+
+      <footer className="pg-foot">
+        <span><b>The Google Sheet is the source of truth.</b> The team updates status and ticks “Complete” there; this command view is the CEO snapshot, regenerated each re-audit cycle.</span>
+        <span className="pg-foot-note">This view can’t crawl the sites on its own — re-audits run on the 3-day cadence (triggered chat or a scheduled pipeline). Stars you set are shared with the team.</span>
+      </footer>
+    </div>
+  );
+}
+
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap');
+* { box-sizing: border-box; }
+.pg-root { font-family: Inter, system-ui, sans-serif; color: #0F172A; background: #EEF2F8; min-height: 100%; -webkit-font-smoothing: antialiased; }
+.pg-arc { transition: stroke-dasharray .9s ease; }
+@media (prefers-reduced-motion: reduce) { .pg-arc, * { transition: none !important; } }
+
+.pg-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+  background: linear-gradient(120deg,#0B1F38 0%,#10294A 55%,#0E5B57 140%); color: #fff; padding: 18px 26px; }
+.pg-head-l { display: flex; flex-direction: column; gap: 3px; }
+.pg-mark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .14em; display: flex; align-items: center; gap: 10px; }
+.pg-drop { width: 12px; height: 12px; border-radius: 60% 60% 60% 0; transform: rotate(45deg); background: linear-gradient(135deg,#6EE7D2,#2563EB); display: inline-block; }
+.pg-sub { font-size: 12px; color: #9DB6D4; letter-spacing: .03em; }
+.pg-head-r { display: flex; align-items: center; gap: 10px; }
+.pg-asof { font: 600 12px 'JetBrains Mono', monospace; color: #CFE0F2; }
+.pg-cad { font-size: 11px; font-weight: 600; color: #6EE7D2; border: 1px solid rgba(110,231,210,.4); padding: 5px 10px; border-radius: 999px; }
+
+.pg-main { max-width: 1180px; margin: 0 auto; padding: 22px 22px 40px; display: flex; flex-direction: column; gap: 22px; }
+
+.pg-hero { display: grid; grid-template-columns: 270px 1fr; gap: 18px; }
+.pg-gauge-card { background: #fff; border: 1px solid #E2E8F2; border-radius: 16px; padding: 18px 18px 20px; text-align: center; box-shadow: 0 1px 2px rgba(11,31,56,.04); }
+.pg-card-eyebrow { font: 600 10.5px 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #64748B; margin-bottom: 4px; }
+.pg-verdict { display: inline-block; font-weight: 700; font-size: 13.5px; padding: 5px 14px; border-radius: 999px; margin-top: 2px; }
+.pg-interp { font-size: 12.5px; color: #475569; line-height: 1.5; margin: 12px 2px 0; }
+.pg-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.pg-chip { position: relative; background: #fff; border: 1px solid #E2E8F2; border-radius: 14px; padding: 16px 14px 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(11,31,56,.04); }
+.pg-chip-v { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 30px; line-height: 1; color: #0B1F38; }
+.pg-chip-l { font-size: 11.5px; color: #64748B; margin-top: 7px; font-weight: 500; }
+.pg-chip-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+
+.pg-tri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.pg-mcard { background: #fff; border: 1px solid #E2E8F2; border-top: 3px solid; border-radius: 16px; padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 2px rgba(11,31,56,.04); }
+.pg-mhead { display: flex; justify-content: space-between; align-items: flex-start; }
+.pg-mname { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; }
+.pg-mwho { font-size: 11px; color: #64748B; margin-top: 2px; }
+.pg-mopen { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 30px; line-height: .9; text-align: right; }
+.pg-mopen span { display: block; font: 500 10px Inter; color: #64748B; }
+.pg-mstats { display: flex; flex-wrap: wrap; gap: 6px; }
+.pg-mstats span { font: 600 11px 'JetBrains Mono', monospace; background: #F1F5FB; color: #334155; padding: 4px 8px; border-radius: 7px; }
+.pg-mstats .bad { background: #FCE4E4; color: #B91C1C; }
+.pg-mstats .legal { background: #F6C9C9; color: #7F1D1D; }
+.pg-mtop { display: flex; flex-direction: column; gap: 5px; min-height: 30px; }
+.pg-mtop-ok { font-size: 12px; color: #15803D; }
+.pg-mtop-row { display: flex; gap: 8px; align-items: center; cursor: pointer; font-size: 12px; color: #334155; padding: 3px 4px; border-radius: 6px; }
+.pg-mtop-row:hover { background: #F1F5FB; }
+.pg-mtop-task { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pg-mfoot { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #64748B; }
+.pg-mbar { flex: 1; height: 6px; background: #EEF2F8; border-radius: 999px; overflow: hidden; }
+.pg-mbar span { display: block; height: 100%; }
+.pg-pri { font: 700 10px 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 5px; color: #fff; }
+.pg-pri[data-p="P0"] { background: #B91C1C; } .pg-pri[data-p="P1"] { background: #D97706; }
+.pg-pri[data-p="P2"] { background: #2563EB; } .pg-pri[data-p="P3"] { background: #94A3B8; }
+
+.pg-risk { background: #fff; border: 1px solid #E2E8F2; border-radius: 16px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,31,56,.04); }
+.pg-risk-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.pg-risk-head h2 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; margin: 0; color: #0B1F38; }
+.pg-risk-sub { font: 600 11px 'JetBrains Mono', monospace; color: #B91C1C; }
+.pg-risk-list { display: flex; flex-direction: column; }
+.pg-risk-row { display: grid; grid-template-columns: 52px 58px 1fr 150px 130px; gap: 10px; align-items: center; padding: 8px 4px; border-top: 1px solid #EEF2F8; font-size: 13px; }
+.pg-rid { font: 600 12px 'JetBrains Mono', monospace; color: #0B1F38; }
+.pg-rmkt { font: 600 11px 'JetBrains Mono', monospace; text-align: center; padding: 3px 0; border-radius: 6px; }
+.pg-rtask { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pg-rowner { font-size: 12px; color: #475569; }
+.pg-rflag { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 999px; justify-self: start; }
+.pg-rflag i, .pg-flagpill i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+.pg-three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.pg-panel { background: #fff; border: 1px solid #E2E8F2; border-radius: 16px; padding: 14px 16px; box-shadow: 0 1px 2px rgba(11,31,56,.04); }
+.pg-panel-h { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 13.5px; color: #0B1F38; margin-bottom: 10px; }
+.pg-mini { width: 100%; border-collapse: collapse; }
+.pg-mini th { font: 600 10px 'JetBrains Mono', monospace; letter-spacing: .04em; text-transform: uppercase; color: #94A3B8; text-align: center; padding: 4px 4px; border-bottom: 1px solid #EEF2F8; }
+.pg-mini th:first-child, .pg-mini td.l { text-align: left; }
+.pg-mini td { font-size: 13px; text-align: center; padding: 7px 4px; border-bottom: 1px solid #F4F7FB; color: #1E293B; }
+.pg-mini td.l { font-weight: 600; color: #0B1F38; }
+.pg-mini td.bad { color: #B91C1C; font-weight: 700; }
+.pg-tag { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.pg-tag.r { background: #FCE4E4; color: #B91C1C; } .pg-tag.a { background: #FCEFD6; color: #B45309; } .pg-tag.g { background: #E3F4E8; color: #15803D; }
+.pg-legalcall { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 9px 12px; background: #FCECEC; border-radius: 10px; font-size: 12px; color: #7F1D1D; font-weight: 600; }
+.pg-legalcall b { font-family: 'Space Grotesk', sans-serif; font-size: 20px; }
+.pg-reaudit { display: flex; flex-direction: column; gap: 7px; }
+.pg-ra-row { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+.pg-ra-m { font-weight: 700; width: 50px; }
+.pg-ra-d { color: #64748B; font: 500 11px 'JetBrains Mono', monospace; }
+.pg-ra-s { font: 600 11px 'JetBrains Mono', monospace; padding: 2px 8px; border-radius: 6px; }
+.pg-ra-s.due { background: #FCE4E4; color: #B91C1C; } .pg-ra-s.ok { background: #E3F4E8; color: #15803D; }
+.pg-ra-rep { font-size: 10.5px; font-weight: 600; color: #7C3AED; background: #F1E8FE; padding: 2px 7px; border-radius: 6px; }
+.pg-spark { margin-top: 12px; padding-top: 10px; border-top: 1px solid #EEF2F8; }
+.pg-spark-cap { font: 600 10px 'JetBrains Mono', monospace; letter-spacing: .06em; text-transform: uppercase; color: #94A3B8; margin-bottom: 4px; }
+
+.pg-table-wrap { background: #fff; border: 1px solid #E2E8F2; border-radius: 16px; padding: 16px 16px 10px; box-shadow: 0 1px 2px rgba(11,31,56,.04); }
+.pg-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.pg-mkt-chips { display: flex; gap: 6px; }
+.pg-chipbtn { font: 600 12.5px Inter; padding: 7px 14px; border-radius: 999px; border: 1px solid #D9E1EE; background: #fff; color: #334155; cursor: pointer; }
+.pg-chipbtn.on { background: #0B1F38; border-color: #0B1F38; color: #fff; }
+.pg-selects { display: flex; gap: 10px; flex-wrap: wrap; }
+.pg-selects label { font: 600 10px 'JetBrains Mono', monospace; letter-spacing: .04em; text-transform: uppercase; color: #94A3B8; display: flex; flex-direction: column; gap: 3px; }
+.pg-selects select { font: 500 13px Inter; padding: 6px 8px; border: 1px solid #D9E1EE; border-radius: 9px; background: #fff; color: #1E293B; }
+.pg-search-wrap { display: flex; gap: 8px; align-items: center; }
+.pg-search { font: 400 13px Inter; padding: 8px 12px; border: 1px solid #D9E1EE; border-radius: 9px; width: 180px; }
+.pg-flagtog { font: 600 12px Inter; padding: 8px 12px; border-radius: 9px; border: 1px solid #D9E1EE; background: #fff; color: #64748B; cursor: pointer; }
+.pg-flagtog.on { background: #FEF3C7; border-color: #F2C94C; color: #B45309; }
+.pg-count { font: 600 11px 'JetBrains Mono', monospace; color: #94A3B8; margin: 12px 2px 6px; }
+
+.pg-table { display: flex; flex-direction: column; }
+.pg-tr { display: grid; grid-template-columns: 34px 64px 70px 1fr 150px 46px 66px 132px; gap: 10px; align-items: center; padding: 9px 6px; border-top: 1px solid #EEF2F8; font-size: 13px; cursor: pointer; }
+.pg-th { border-top: none; cursor: default; }
+.pg-th span { font: 600 10px 'JetBrains Mono', monospace; letter-spacing: .05em; text-transform: uppercase; color: #94A3B8; }
+.pg-rowgroup:hover .pg-tr { background: #F7FAFE; }
+.pg-rowgroup.open .pg-tr { background: #F1F5FB; }
+.c-flag { display: flex; justify-content: center; }
+.star { background: none; border: none; cursor: pointer; font-size: 15px; color: #D2DAE6; padding: 0; line-height: 1; }
+.star.on { color: #F2C94C; }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.c-id { color: #0B1F38; font-weight: 600; }
+.c-task { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1E293B; }
+.c-own { font-size: 12px; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-own em { color: #94A3B8; font-style: normal; }
+.c-due { color: #475569; }
+.pg-mkpill { font: 600 11px 'JetBrains Mono', monospace; padding: 3px 8px; border-radius: 6px; }
+.pg-flagpill { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 999px; }
+.pg-repeat { font-size: 10px; font-weight: 600; color: #7C3AED; background: #F1E8FE; padding: 1px 6px; border-radius: 5px; margin-left: 8px; }
+.pg-detail { padding: 4px 8px 16px 44px; background: #F7FAFE; border-top: 1px solid #EEF2F8; }
+.pg-d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; padding-top: 12px; }
+.pg-d-grid label, .pg-d-rem label { font: 600 9.5px 'JetBrains Mono', monospace; letter-spacing: .06em; text-transform: uppercase; color: #94A3B8; display: block; margin-bottom: 3px; }
+.pg-d-grid p { margin: 0; font-size: 13px; color: #334155; line-height: 1.45; }
+.pg-d-rem { margin-top: 12px; font-size: 13px; color: #334155; }
+.pg-empty { padding: 26px; text-align: center; color: #94A3B8; font-size: 13px; }
+
+.pg-foot { max-width: 1180px; margin: 0 auto; padding: 4px 22px 34px; display: flex; flex-direction: column; gap: 4px; }
+.pg-foot span { font-size: 12px; color: #64748B; }
+.pg-foot b { color: #334155; }
+.pg-foot-note { color: #94A3B8; }
+
+:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; border-radius: 6px; }
+
+@media (max-width: 900px) {
+  .pg-hero { grid-template-columns: 1fr; }
+  .pg-kpis { grid-template-columns: repeat(3, 1fr); }
+  .pg-tri, .pg-three { grid-template-columns: 1fr; }
+  .pg-risk-row { grid-template-columns: 46px 50px 1fr; }
+  .pg-rowner, .pg-rflag { display: none; }
+  .pg-tr { grid-template-columns: 28px 56px 1fr 46px 116px; }
+  .c-mkt, .c-own, .c-due { display: none; }
+  .pg-th .c-mkt, .pg-th .c-own, .pg-th .c-due { display: none; }
+  .pg-d-grid { grid-template-columns: 1fr; }
+}
+`;
