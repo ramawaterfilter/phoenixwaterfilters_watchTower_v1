@@ -1,5 +1,5 @@
 {
-  "ts": "2026-06-16T22:03:50.560393+00:00",
+  "ts": "2026-06-17T16:47:51.443803+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -137,9 +137,9 @@
       "label": "Translator's note gone — Gravity PDP",
       "task": "FR-16",
       "page": "fr_pdp_gravity",
-      "result": "fail",
-      "detail": "'Note du traducteur' STILL PRESENT",
-      "change": "same"
+      "result": "pass",
+      "detail": "'Note du traducteur' absent",
+      "change": "fixed"
     },
     {
       "id": "FR-KOKO-TRANSNOTE",
@@ -147,9 +147,9 @@
       "label": "Translator's note gone — KokoCarb PDP",
       "task": "FR-16",
       "page": "fr_pdp_kokocarb",
-      "result": "fail",
-      "detail": "'Note du traducteur' STILL PRESENT",
-      "change": "same"
+      "result": "pass",
+      "detail": "'Note du traducteur' absent",
+      "change": "fixed"
     },
     {
       "id": "FR-POST-TRANSNOTE",
@@ -157,9 +157,9 @@
       "label": "Translator's note gone — POSTreat PDP",
       "task": "FR-16",
       "page": "fr_pdp_postreat",
-      "result": "fail",
-      "detail": "'Note du traducteur' STILL PRESENT",
-      "change": "same"
+      "result": "pass",
+      "detail": "'Note du traducteur' absent",
+      "change": "fixed"
     },
     {
       "id": "FR-EN-LEFTOVER",
