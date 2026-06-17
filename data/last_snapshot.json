@@ -1,5 +1,5 @@
 {
-  "ts": "2026-06-17T17:52:47.096046+00:00",
+  "ts": "2026-06-17T21:25:06.337083+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -107,8 +107,8 @@
       "label": "Homepage title typo gone ('healthy' lower-case)",
       "task": "UK-08",
       "page": "uk_home",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "fail",
+      "detail": "matched: 'Clean & Healthy Water'",
       "change": "changed"
     },
     {
@@ -117,8 +117,8 @@
       "label": "Stale winter-sale banner removed",
       "task": "UK-44",
       "page": "uk_home",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "pass",
+      "detail": "'Winter Sale' absent",
       "change": "changed"
     },
     {
@@ -157,8 +157,8 @@
       "label": "Translator's note gone — POSTreat PDP",
       "task": "FR-16",
       "page": "fr_pdp_postreat",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "pass",
+      "detail": "'Note du traducteur' absent",
       "change": "changed"
     },
     {
@@ -177,8 +177,8 @@
       "label": "UK (+44) phone removed from FR site",
       "task": "FR-02",
       "page": "fr_home",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "fail",
+      "detail": "matched: '+44'",
       "change": "changed"
     },
     {
@@ -187,8 +187,8 @@
       "label": "'Aux France' grammar error gone",
       "task": "FR-30",
       "page": "fr_home",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "pass",
+      "detail": "'Aux France' absent",
       "change": "changed"
     },
     {
@@ -197,8 +197,8 @@
       "label": "GDPR/consent banner present",
       "task": "FR-03",
       "page": "fr_home",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "pass",
+      "detail": "matched: 'consent'",
       "change": "changed"
     },
     {
@@ -227,8 +227,8 @@
       "label": "T&Cs include 14-day withdrawal right",
       "task": "FR-05",
       "page": "fr_tnc",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "fail",
+      "detail": "pattern NOT FOUND",
       "change": "changed"
     },
     {
@@ -237,8 +237,8 @@
       "label": "T&Cs include SIRET",
       "task": "FR-04",
       "page": "fr_tnc",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "fail",
+      "detail": "pattern NOT FOUND",
       "change": "changed"
     },
     {
