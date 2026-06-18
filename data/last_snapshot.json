@@ -1,5 +1,5 @@
 {
-  "ts": "2026-06-17T21:25:06.337083+00:00",
+  "ts": "2026-06-18T16:46:21.500455+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -109,7 +109,7 @@
       "page": "uk_home",
       "result": "fail",
       "detail": "matched: 'Clean & Healthy Water'",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "UK-SALE-BANNER",
@@ -119,7 +119,7 @@
       "page": "uk_home",
       "result": "pass",
       "detail": "'Winter Sale' absent",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "UK-ROBOTS",
@@ -159,7 +159,7 @@
       "page": "fr_pdp_postreat",
       "result": "pass",
       "detail": "'Note du traducteur' absent",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "FR-EN-LEFTOVER",
@@ -179,7 +179,7 @@
       "page": "fr_home",
       "result": "fail",
       "detail": "matched: '+44'",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "FR-GRAMMAR",
@@ -189,7 +189,7 @@
       "page": "fr_home",
       "result": "pass",
       "detail": "'Aux France' absent",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "FR-CONSENT",
@@ -199,7 +199,7 @@
       "page": "fr_home",
       "result": "pass",
       "detail": "matched: 'consent'",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "FR-GRAVITY-SCHEMA",
@@ -229,7 +229,7 @@
       "page": "fr_tnc",
       "result": "fail",
       "detail": "pattern NOT FOUND",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "FR-TNC-SIRET",
@@ -239,7 +239,7 @@
       "page": "fr_tnc",
       "result": "fail",
       "detail": "pattern NOT FOUND",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "FR-ROBOTS-CART",
