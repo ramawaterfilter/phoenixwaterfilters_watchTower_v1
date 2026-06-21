@@ -1,5 +1,5 @@
 {
-  "ts": "2026-06-20T18:01:37.965477+00:00",
+  "ts": "2026-06-21T12:22:18.451308+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -277,9 +277,9 @@
       "label": "Typo URL /refund-polycy-new gone",
       "task": "FR-33",
       "page": "fr_typo2",
-      "result": "fail",
-      "detail": "HTTP 503 (expected [301, 302, 404, 410])",
-      "change": "regressed"
+      "result": "pass",
+      "detail": "HTTP 404 (expected [301, 302, 404, 410])",
+      "change": "fixed"
     }
   ]
 }
