@@ -1,5 +1,5 @@
 {
-  "ts": "2026-06-26T12:28:58.689866+00:00",
+  "ts": "2026-06-26T16:02:59.298990+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -67,8 +67,8 @@
       "label": "£0.00 price gone — KokoCarb PDP",
       "task": "UK-01",
       "page": "uk_pdp_kokocarb",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "fail",
+      "detail": "'£0.00' STILL PRESENT",
       "change": "changed"
     },
     {
@@ -77,8 +77,8 @@
       "label": "£0.00 price gone — POSTreat PDP",
       "task": "UK-01",
       "page": "uk_pdp_postreat",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "fail",
+      "detail": "'£0.00' STILL PRESENT",
       "change": "changed"
     },
     {
@@ -97,8 +97,8 @@
       "label": "Product schema — KokoCarb PDP",
       "task": "UK-05",
       "page": "uk_pdp_kokocarb",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "pass",
+      "detail": "JSON-LD @type=Product found",
       "change": "changed"
     },
     {
@@ -139,7 +139,7 @@
       "page": "fr_pdp_gravity",
       "result": "fail",
       "detail": "'Note du traducteur' STILL PRESENT",
-      "change": "regressed"
+      "change": "same"
     },
     {
       "id": "FR-KOKO-TRANSNOTE",
