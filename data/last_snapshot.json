@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-14T09:26:52.562219+00:00",
+  "ts": "2026-07-14T15:07:04.736579+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -137,9 +137,9 @@
       "label": "Translator's note gone — Gravity PDP",
       "task": "FR-16",
       "page": "fr_pdp_gravity",
-      "result": "fail",
-      "detail": "'Note du traducteur' STILL PRESENT",
-      "change": "same"
+      "result": "pass",
+      "detail": "'Note du traducteur' absent",
+      "change": "fixed"
     },
     {
       "id": "FR-KOKO-TRANSNOTE",
