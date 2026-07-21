@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-20T15:26:02.935575+00:00",
+  "ts": "2026-07-21T07:05:03.436002+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -27,9 +27,9 @@
       "label": "US PDP reachable — Fluoride elements",
       "task": "US-PDP",
       "page": "us_pdp_fluoride",
-      "result": "pass",
-      "detail": "HTTP 200 (expected [200])",
-      "change": "same"
+      "result": "fail",
+      "detail": "HTTP 503 (expected [200])",
+      "change": "regressed"
     },
     {
       "id": "US-GRAVITY-SCHEMA",
@@ -37,9 +37,9 @@
       "label": "US Gravity PDP has Product schema",
       "task": "US-SCHEMA",
       "page": "us_pdp_gravity",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "US-ADDRESS",
@@ -47,9 +47,9 @@
       "label": "US address/ZIP present in footer",
       "task": "US-LEGAL",
       "page": "us_home",
-      "result": "pass",
-      "detail": "matched: '14400'",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "UK-GRAVITY-PRICE0",
@@ -57,9 +57,9 @@
       "label": "£0.00 price gone — Gravity PDP",
       "task": "UK-01",
       "page": "uk_pdp_gravity",
-      "result": "fail",
-      "detail": "'£0.00' STILL PRESENT",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "UK-KOKO-PRICE0",
@@ -87,9 +87,9 @@
       "label": "Product schema — Gravity PDP",
       "task": "UK-05",
       "page": "uk_pdp_gravity",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "UK-KOKO-SCHEMA",
@@ -107,9 +107,9 @@
       "label": "Homepage title typo gone ('healthy' lower-case)",
       "task": "UK-08",
       "page": "uk_home",
-      "result": "fail",
-      "detail": "matched: 'Clean & Healthy Water'",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "UK-SALE-BANNER",
@@ -117,9 +117,9 @@
       "label": "Stale winter-sale banner removed",
       "task": "UK-44",
       "page": "uk_home",
-      "result": "pass",
-      "detail": "'Winter Sale' absent",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "UK-ROBOTS",
@@ -137,9 +137,9 @@
       "label": "Translator's note gone — Gravity PDP",
       "task": "FR-16",
       "page": "fr_pdp_gravity",
-      "result": "pass",
-      "detail": "'Note du traducteur' absent",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-KOKO-TRANSNOTE",
@@ -147,9 +147,9 @@
       "label": "Translator's note gone — KokoCarb PDP",
       "task": "FR-16",
       "page": "fr_pdp_kokocarb",
-      "result": "pass",
-      "detail": "'Note du traducteur' absent",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-POST-TRANSNOTE",
@@ -157,9 +157,9 @@
       "label": "Translator's note gone — POSTreat PDP",
       "task": "FR-16",
       "page": "fr_pdp_postreat",
-      "result": "pass",
-      "detail": "'Note du traducteur' absent",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-EN-LEFTOVER",
@@ -167,9 +167,9 @@
       "label": "No English 'translator note' leftover",
       "task": "FR-16",
       "page": "fr_pdp_gravity",
-      "result": "pass",
-      "detail": "pattern absent",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-UKPHONE",
@@ -207,9 +207,9 @@
       "label": "Product schema — Gravity PDP",
       "task": "FR-31",
       "page": "fr_pdp_gravity",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-KOKO-SCHEMA",
@@ -217,9 +217,9 @@
       "label": "Product schema — KokoCarb PDP",
       "task": "FR-31",
       "page": "fr_pdp_kokocarb",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-TNC-WITHDRAW",
@@ -227,9 +227,9 @@
       "label": "T&Cs include 14-day withdrawal right",
       "task": "FR-05",
       "page": "fr_tnc",
-      "result": "fail",
-      "detail": "pattern NOT FOUND",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-TNC-SIRET",
@@ -237,9 +237,9 @@
       "label": "T&Cs include SIRET",
       "task": "FR-04",
       "page": "fr_tnc",
-      "result": "fail",
-      "detail": "pattern NOT FOUND",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-ROBOTS-CART",
@@ -257,9 +257,9 @@
       "label": "EN duplicate slug 301/404 (de-indexed)",
       "task": "FR-33",
       "page": "fr_en_dup_slug",
-      "result": "pass",
-      "detail": "HTTP 301 (expected [301, 302, 404, 410])",
-      "change": "same"
+      "result": "fail",
+      "detail": "HTTP 503 (expected [301, 302, 404, 410])",
+      "change": "regressed"
     },
     {
       "id": "FR-TYPO1",
@@ -267,9 +267,9 @@
       "label": "Typo URL /pricvacy-policy gone",
       "task": "FR-33",
       "page": "fr_typo1",
-      "result": "pass",
-      "detail": "HTTP 404 (expected [301, 302, 404, 410])",
-      "change": "same"
+      "result": "fail",
+      "detail": "HTTP 503 (expected [301, 302, 404, 410])",
+      "change": "regressed"
     },
     {
       "id": "FR-TYPO2",
@@ -277,9 +277,9 @@
       "label": "Typo URL /refund-polycy-new gone",
       "task": "FR-33",
       "page": "fr_typo2",
-      "result": "pass",
-      "detail": "HTTP 404 (expected [301, 302, 404, 410])",
-      "change": "same"
+      "result": "fail",
+      "detail": "HTTP 503 (expected [301, 302, 404, 410])",
+      "change": "regressed"
     }
   ]
 }
