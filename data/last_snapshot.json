@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-22T15:18:49.739426+00:00",
+  "ts": "2026-07-23T07:04:04.430066+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -177,9 +177,9 @@
       "label": "UK (+44) phone removed from FR site",
       "task": "FR-02",
       "page": "fr_home",
-      "result": "pass",
-      "detail": "pattern absent",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-GRAMMAR",
@@ -187,9 +187,9 @@
       "label": "'Aux France' grammar error gone",
       "task": "FR-30",
       "page": "fr_home",
-      "result": "pass",
-      "detail": "'Aux France' absent",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-CONSENT",
@@ -197,9 +197,9 @@
       "label": "GDPR/consent banner present",
       "task": "FR-03",
       "page": "fr_home",
-      "result": "pass",
-      "detail": "matched: 'consent'",
-      "change": "same"
+      "result": "error",
+      "detail": "HTTP 503 while fetching page",
+      "change": "changed"
     },
     {
       "id": "FR-GRAVITY-SCHEMA",
@@ -277,9 +277,9 @@
       "label": "Typo URL /refund-polycy-new gone",
       "task": "FR-33",
       "page": "fr_typo2",
-      "result": "pass",
-      "detail": "HTTP 404 (expected [301, 302, 404, 410])",
-      "change": "same"
+      "result": "fail",
+      "detail": "HTTP 503 (expected [301, 302, 404, 410])",
+      "change": "regressed"
     }
   ]
 }
