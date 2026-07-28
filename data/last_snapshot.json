@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-28T10:09:55.004472+00:00",
+  "ts": "2026-07-28T15:41:11.655535+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -7,9 +7,9 @@
       "label": "US PDP reachable — Gravity filter",
       "task": "US-PDP",
       "page": "us_pdp_gravity",
-      "result": "fail",
-      "detail": "HTTP 503 (expected [200])",
-      "change": "regressed"
+      "result": "pass",
+      "detail": "HTTP 200 (expected [200])",
+      "change": "fixed"
     },
     {
       "id": "US-CARBON-UP",
@@ -37,8 +37,8 @@
       "label": "US Gravity PDP has Product schema",
       "task": "US-SCHEMA",
       "page": "us_pdp_gravity",
-      "result": "error",
-      "detail": "HTTP 503 while fetching page",
+      "result": "pass",
+      "detail": "JSON-LD @type=Product found",
       "change": "changed"
     },
     {
@@ -87,9 +87,9 @@
       "label": "Product schema — Gravity PDP",
       "task": "UK-05",
       "page": "uk_pdp_gravity",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "fail",
+      "detail": "JSON-LD @type=Product MISSING",
+      "change": "regressed"
     },
     {
       "id": "UK-KOKO-SCHEMA",
@@ -97,9 +97,9 @@
       "label": "Product schema — KokoCarb PDP",
       "task": "UK-05",
       "page": "uk_pdp_kokocarb",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "fail",
+      "detail": "JSON-LD @type=Product MISSING",
+      "change": "regressed"
     },
     {
       "id": "UK-TITLE-TYPO",
@@ -127,9 +127,9 @@
       "label": "robots.txt reachable",
       "task": "UK-02",
       "page": "uk_robots",
-      "result": "fail",
-      "detail": "HTTP 503 (expected [200])",
-      "change": "regressed"
+      "result": "pass",
+      "detail": "HTTP 200 (expected [200])",
+      "change": "fixed"
     },
     {
       "id": "FR-GRAVITY-TRANSNOTE",
