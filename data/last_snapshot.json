@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-28T15:41:11.655535+00:00",
+  "ts": "2026-07-29T07:15:19.617054+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -9,7 +9,7 @@
       "page": "us_pdp_gravity",
       "result": "pass",
       "detail": "HTTP 200 (expected [200])",
-      "change": "fixed"
+      "change": "same"
     },
     {
       "id": "US-CARBON-UP",
@@ -39,7 +39,7 @@
       "page": "us_pdp_gravity",
       "result": "pass",
       "detail": "JSON-LD @type=Product found",
-      "change": "changed"
+      "change": "same"
     },
     {
       "id": "US-ADDRESS",
@@ -89,7 +89,7 @@
       "page": "uk_pdp_gravity",
       "result": "fail",
       "detail": "JSON-LD @type=Product MISSING",
-      "change": "regressed"
+      "change": "same"
     },
     {
       "id": "UK-KOKO-SCHEMA",
@@ -99,7 +99,7 @@
       "page": "uk_pdp_kokocarb",
       "result": "fail",
       "detail": "JSON-LD @type=Product MISSING",
-      "change": "regressed"
+      "change": "same"
     },
     {
       "id": "UK-TITLE-TYPO",
@@ -129,7 +129,7 @@
       "page": "uk_robots",
       "result": "pass",
       "detail": "HTTP 200 (expected [200])",
-      "change": "fixed"
+      "change": "same"
     },
     {
       "id": "FR-GRAVITY-TRANSNOTE",
