@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-29T10:10:39.918710+00:00",
+  "ts": "2026-07-29T15:34:05.866566+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -87,9 +87,9 @@
       "label": "Product schema — Gravity PDP",
       "task": "UK-05",
       "page": "uk_pdp_gravity",
-      "result": "fail",
-      "detail": "JSON-LD @type=Product MISSING",
-      "change": "same"
+      "result": "pass",
+      "detail": "JSON-LD @type=Product found",
+      "change": "fixed"
     },
     {
       "id": "UK-KOKO-SCHEMA",
@@ -97,9 +97,9 @@
       "label": "Product schema — KokoCarb PDP",
       "task": "UK-05",
       "page": "uk_pdp_kokocarb",
-      "result": "fail",
-      "detail": "JSON-LD @type=Product MISSING",
-      "change": "same"
+      "result": "pass",
+      "detail": "JSON-LD @type=Product found",
+      "change": "fixed"
     },
     {
       "id": "UK-TITLE-TYPO",
@@ -107,9 +107,9 @@
       "label": "Homepage title typo gone ('healthy' lower-case)",
       "task": "UK-08",
       "page": "uk_home",
-      "result": "fail",
-      "detail": "matched: 'Clean & Healthy Water'",
-      "change": "same"
+      "result": "pass",
+      "detail": "pattern absent",
+      "change": "fixed"
     },
     {
       "id": "UK-SALE-BANNER",
