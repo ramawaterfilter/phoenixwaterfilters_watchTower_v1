@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-29T15:34:05.866566+00:00",
+  "ts": "2026-07-30T07:08:55.585992+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -89,7 +89,7 @@
       "page": "uk_pdp_gravity",
       "result": "pass",
       "detail": "JSON-LD @type=Product found",
-      "change": "fixed"
+      "change": "same"
     },
     {
       "id": "UK-KOKO-SCHEMA",
@@ -99,7 +99,7 @@
       "page": "uk_pdp_kokocarb",
       "result": "pass",
       "detail": "JSON-LD @type=Product found",
-      "change": "fixed"
+      "change": "same"
     },
     {
       "id": "UK-TITLE-TYPO",
@@ -109,7 +109,7 @@
       "page": "uk_home",
       "result": "pass",
       "detail": "pattern absent",
-      "change": "fixed"
+      "change": "same"
     },
     {
       "id": "UK-SALE-BANNER",
