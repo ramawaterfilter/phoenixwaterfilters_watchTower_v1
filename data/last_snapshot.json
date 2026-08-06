@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-06T10:10:43.746043+00:00",
+  "ts": "2026-08-06T15:42:10.702835+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -87,9 +87,9 @@
       "label": "Product schema — Gravity PDP",
       "task": "UK-05",
       "page": "uk_pdp_gravity",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "fail",
+      "detail": "JSON-LD @type=Product MISSING",
+      "change": "regressed"
     },
     {
       "id": "UK-KOKO-SCHEMA",
@@ -97,9 +97,9 @@
       "label": "Product schema — KokoCarb PDP",
       "task": "UK-05",
       "page": "uk_pdp_kokocarb",
-      "result": "pass",
-      "detail": "JSON-LD @type=Product found",
-      "change": "same"
+      "result": "fail",
+      "detail": "JSON-LD @type=Product MISSING",
+      "change": "regressed"
     },
     {
       "id": "UK-TITLE-TYPO",
