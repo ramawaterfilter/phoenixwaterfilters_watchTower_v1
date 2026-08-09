@@ -1,5 +1,5 @@
 {
-  "ts": "2026-08-08T14:04:28.101802+00:00",
+  "ts": "2026-08-09T05:28:43.988346+00:00",
   "results": [
     {
       "id": "US-GRAVITY-UP",
@@ -89,7 +89,7 @@
       "page": "uk_pdp_gravity",
       "result": "pass",
       "detail": "JSON-LD @type=Product found",
-      "change": "fixed"
+      "change": "same"
     },
     {
       "id": "UK-KOKO-SCHEMA",
@@ -99,7 +99,7 @@
       "page": "uk_pdp_kokocarb",
       "result": "pass",
       "detail": "JSON-LD @type=Product found",
-      "change": "fixed"
+      "change": "same"
     },
     {
       "id": "UK-TITLE-TYPO",
